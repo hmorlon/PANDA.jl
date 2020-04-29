@@ -1,7 +1,7 @@
 name = "PANDA"
 uuid = "57a71ab2-c1ee-420a-94e0-f42fd769768c"
 authors = ["Hélène Morlon", "Ignacio Quintero", "Odile Maliet"]
-version = "0.1.1"
+version = "0.0.1"
 
 [deps]
 DelimitedFiles = "8bb1440f-4735-579b-a4ab-409b98df4dab"
@@ -15,7 +15,11 @@ Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 SharedArrays = "1a1011a3-84de-559e-8e89-a11a2f7dc383"
 
 [compat]
-julia = "1"
+julia = "≥ 1.1.0"
+Optim = "≥ 0.18.0"
+ProgressMeter = "≥ 0.9.0"
+RCall = "≥ 0.13.2"
+DifferentialEquations = "≥ v6.0.0"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
