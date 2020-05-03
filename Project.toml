@@ -16,7 +16,7 @@ SharedArrays = "1a1011a3-84de-559e-8e89-a11a2f7dc383"
 
 [compat]
 julia = "1"
-Optim = "0.1, 0.2"
+Optim = "0"
 ProgressMeter = "0.9, 1"
 RCall = "0.13"
 DifferentialEquations = "6"
