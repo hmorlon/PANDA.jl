@@ -65,15 +65,3 @@ function solvef(int::OrdinaryDiffEq.ODEIntegrator,
 end
 
 
-
-
-
-
-
-
-
-
-
-
-
-
