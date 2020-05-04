@@ -121,11 +121,11 @@ function esse(states_file ::String,
   elseif occursin(r"^[p|P][A-za-z]*", algorithm)
 
     # prepare likelihood
-    X, ode_solve, λevent!, rootll, abts1, abts2 = 
+    X, int, λevent!, rootll, abts1, abts2 = 
       prepare_ll(X, p, E0, ns, k, h, ny, model, abts ,af!)
 
     # make likelihood function
-    llf = make_loglik(X, abts1, abts2, trios, ode_solve, 
+    llf = make_loglik(X, abts1, abts2, trios, int, 
       λevent!, rootll, k, h, ns, ned)
 
   else

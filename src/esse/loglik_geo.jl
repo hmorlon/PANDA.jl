@@ -83,7 +83,7 @@ function make_loglik(X        ::Array{Array{Float64,1},1},
                      abts1    ::Array{Float64,1},
                      abts2    ::Array{Float64,1},
                      trios    ::Array{Array{Int64,1},1},
-                     ode_solve::Function,
+                     int      ::OrdinaryDiffEq.ODEIntegrator,
                      λevent!  ::Function, 
                      rootll   ::Function,
                      k        ::Int64,
@@ -100,6 +100,8 @@ function make_loglik(X        ::Array{Array{Float64,1},1},
 
     @inbounds begin
 
+      int.p = p
+
       llxtra = 0.0
 
       # loop for integrating over internal branches
@@ -107,11 +109,11 @@ function make_loglik(X        ::Array{Array{Float64,1},1},
 
         pr, d1, d2 = triad::Array{Int64,1}
 
-        ud1 = ode_solve(X[d1], p, abts2[d1], abts1[d1])::Array{Float64,1}
+        ud1 = solvef(int, X[d1], abts2[d1], abts1[d1])::Array{Float64,1}
 
         check_negs(ud1, ns) && return -Inf
 
-        ud2 = ode_solve(X[d2], p, abts2[d2], abts1[d2])::Array{Float64,1}
+        ud2 = solvef(int, X[d2], abts2[d2], abts1[d2])::Array{Float64,1}
 
         check_negs(ud2, ns) && return -Inf
 
