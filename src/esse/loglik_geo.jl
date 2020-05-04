@@ -89,7 +89,8 @@ function make_loglik(X        ::Array{Array{Float64,1},1},
                      k        ::Int64,
                      h        ::Int64,
                      ns       ::Int64,
-                     ned      ::Int64)
+                     ned      ::Int64,
+                     npars    ::Int64)
 
   # preallocate vectors
   llik = Array{Float64,1}(undef,ns)
@@ -100,7 +101,7 @@ function make_loglik(X        ::Array{Array{Float64,1},1},
 
     @inbounds begin
 
-      int.p = p
+      unsafe_copyto!(int.p, 1, p, 1, npars)
 
       llxtra = 0.0
 
@@ -109,11 +110,11 @@ function make_loglik(X        ::Array{Array{Float64,1},1},
 
         pr, d1, d2 = triad::Array{Int64,1}
 
-        ud1 = solvef(int, X[d1], abts2[d1], abts1[d1])::Array{Float64,1}
+        ud1 = @views solvef(int, X[d1], abts2[d1], abts1[d1])::Array{Float64,1}
 
         check_negs(ud1, ns) && return -Inf
 
-        ud2 = solvef(int, X[d2], abts2[d2], abts1[d2])::Array{Float64,1}
+        ud2 = @views solvef(int, X[d2], abts2[d2], abts1[d2])::Array{Float64,1}
 
         check_negs(ud2, ns) && return -Inf
 
