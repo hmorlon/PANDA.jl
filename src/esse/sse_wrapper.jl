@@ -126,7 +126,7 @@ function esse(states_file ::String,
 
     # make likelihood function
     llf = make_loglik(X, abts1, abts2, trios, int, 
-      λevent!, rootll, k, h, ns, ned)
+      λevent!, rootll, k, h, ns, ned, lastindex(p))
 
   else
     @error "No matching likelihood for algorithm: $algorithm"
