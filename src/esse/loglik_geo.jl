@@ -93,8 +93,8 @@ function make_loglik(X        ::Array{Array{Float64,1},1},
                      npars    ::Int64)
 
   # preallocate vectors
-  llik = Array{Float64,1}(undef,ns)
-  w    = Array{Float64,1}(undef,ns)
+  llik = Array{Float64,1}(undef, ns)
+  w    = Array{Float64,1}(undef, ns)
   extp = Array{Float64,1}(undef, ns)
 
   function f(p::Array{Float64,1})
@@ -129,18 +129,21 @@ function make_loglik(X        ::Array{Array{Float64,1},1},
         # assign the remaining likelihoods &
         # assign extinction probabilities and 
         # check for extinction of `1.0`
+        @views Xpr = X[pr]
         for i in Base.OneTo(ns)
           ud1[i+ns] > 1.0 && return -Inf
-          X[pr][i+ns] = ud1[i+ns]
-          X[pr][i]    = llik[i]
+          Xpr[i+ns] = ud1[i+ns]
+          Xpr[i]    = llik[i]
         end
+
       end
 
       # assign root likelihood in non log terms &
       # assign root extinction probabilities
+      @views Xned = X[ned]
       for i in Base.OneTo(ns)
-        llik[i] = X[ned][i]
-        extp[i] = X[ned][i+ns]
+        llik[i] = Xned[i]
+        extp[i] = Xned[i+ns]
       end
 
       # estimate likelihood weights
