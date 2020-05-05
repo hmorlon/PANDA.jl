@@ -83,14 +83,13 @@ function make_loglik(X        ::Array{Array{Float64,1},1},
                      abts1    ::Array{Float64,1},
                      abts2    ::Array{Float64,1},
                      trios    ::Array{Array{Int64,1},1},
-                     int      ::OrdinaryDiffEq.ODEIntegrator,
+                     int      ::DiffEqBase.DEIntegrator,
                      λevent!  ::Function, 
                      rootll   ::Function,
                      k        ::Int64,
                      h        ::Int64,
                      ns       ::Int64,
-                     ned      ::Int64,
-                     npars    ::Int64)
+                     ned      ::Int64)
 
   # preallocate vectors
   llik = Array{Float64,1}(undef, ns)
@@ -101,7 +100,7 @@ function make_loglik(X        ::Array{Array{Float64,1},1},
 
     @inbounds begin
 
-      unsafe_copyto!(int.p, 1, p, 1, npars)
+      int.p = p
 
       llxtra = 0.0
 

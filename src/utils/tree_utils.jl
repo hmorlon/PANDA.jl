@@ -326,15 +326,12 @@ function postorderedges(ed  ::Array{Int64,2},
     end
   end
 
-
-  append!(ndp,setdiff(1:(2nspp-2), ndp))
+  append!(ndp,setdiff(1:(2ntip-2), ndp))
 
   ed[ndp,:]
 
   return ed[ndp,:], el[ndp]
 end
-
-
 
 
 

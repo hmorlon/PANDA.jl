@@ -79,7 +79,7 @@ function esse(states_file ::String,
   tv, ed, el, bts, x, y = 
     read_data_esse(states_file, tree_file, envdata_file)
 
-  @info "Data successfully read"
+  @info "Data for $(length(tv)) species successfully read"
 
   # scale y
   if scale_y[1]
@@ -126,7 +126,7 @@ function esse(states_file ::String,
 
     # make likelihood function
     llf = make_loglik(X, abts1, abts2, trios, int, 
-      λevent!, rootll, k, h, ns, ned, lastindex(p))
+      λevent!, rootll, k, h, ns, ned)
 
   else
     @error "No matching likelihood for algorithm: $algorithm"
@@ -266,11 +266,11 @@ function esse(tv          ::Dict{Int64,Array{Float64,1}},
   elseif occursin(r"^[p|P][A-za-z]*", algorithm)
 
     # prepare likelihood
-    X, ode_solve, λevent!, rootll, abts1, abts2 = 
+    X, int, λevent!, rootll, abts1, abts2 = 
       prepare_ll(X, p, E0, ns, k, h, ny, model, abts ,af!)
 
     # make likelihood function
-    llf = make_loglik(X, abts1, abts2, trios, ode_solve, 
+    llf = make_loglik(X, abts1, abts2, trios, int, 
       λevent!, rootll, k, h, ns, ned)
 
   else

@@ -47,14 +47,14 @@ end
 
 
 """
-    solvef(int::OrdinaryDiffEq.ODEIntegrator,
+    solvef(int::DEIntegrator,
            u  ::Array{Float64,1},
            ti ::Float64,
            tf ::Float64)
 
 Solve an IDE integrator for new `u` and and `ti` and `tf`.
 """
-function solvef(int::OrdinaryDiffEq.ODEIntegrator,
+function solvef(int::DiffEqBase.DEIntegrator,
                 u  ::Array{Float64,1},
                 ti ::Float64,
                 tf ::Float64)
@@ -63,5 +63,8 @@ function solvef(int::OrdinaryDiffEq.ODEIntegrator,
     return solve!(int).u[1]
   end
 end
+
+
+
 
 
