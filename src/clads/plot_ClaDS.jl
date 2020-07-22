@@ -8,7 +8,7 @@ function create_plot_ClaDS_ape()
     require(ape)
     require(RColorBrewer)
 
-    plot_ClaDS=function(phylo,rate1,rate2=NULL,same.scale=T,main=NULL,lwd=1,log=F, show_labels=F,...){
+    plot_ClaDS=function(phylo,rate1,rate2=NULL,same.scale=T,main=NULL,lwd=1,log=F, show_labels=F, minr = Inf, maxr = 0,...){
         Colors = colorRampPalette(rev(c('darkred',brewer.pal(n = 8, name = "Spectral"),'darkblue')))(100)
 
      if(nrow(phylo[[1]]) <=1){
@@ -16,36 +16,36 @@ function create_plot_ClaDS_ape()
         lines(c(0,1), c(1,1), lwd=lwd, col="steelblue2")
       }else{
         if(is.null(rate2)){
-          if(log) rate1=log(rate1)
-          if(isTRUE(all.equal(rep(as.numeric(rate1[1]),length(rate1)),as.numeric(rate1)))){
-            col=rep(1,length(rate1))
+          if(log) {
+              rate1=log(rate1)
+              minr = log(minr)
+              maxr = log(maxr)}
+
+            minr = min(c(minr, 0.95*max(rate1),min(rate1)))
+            maxr = max(c(maxr, 1.05*min(rate1), max(rate1)))
+
+            col = round( (rate1 - minr) / (maxr - minr)*99   )+1
             plot(phylo, edge.color = Colors[col], show.tip.label = show_labels,main=main,edge.width =lwd,...)
+
             if(log){
-              image.plot(z = c(exp(rate1[1]),2*exp(rate1[1])),col = Colors, horizontal=T,legend.only = T)
-            }else{
-              image.plot(z = c(rate1[1],2*rate1[1]),col = Colors, horizontal=T,legend.only = T)
-            }
-          }else{
-            col = round( (rate1 - min(rate1)) / diff(range(rate1))*99   )+1
-            plot(phylo, edge.color = Colors[col], show.tip.label = show_labels,main=main,edge.width =lwd,...)
-            if(log){
-              min=min(rate1)
-              max=max(rate1)
-              m10=floor(min/log(10))
-              M10=ceiling(max/log(10))
+              m10=floor(minr/log(10))
+              M10=ceiling(maxr/log(10))
               if((M10-m10)<4){
                 ticks=c(1,2,5)
               }else{
                 ticks=1
               }
+
               ticks=as.vector(sapply(m10:M10,function(k){return(ticks*10^k)}))
-              lt=length(ticks[ticks>exp(min) & ticks<exp(max)])
-              if(lt<4){ticks=c(round(exp(min),max(0,-1*m10+(lt<2))),ticks,round(exp(max),max(0,-1*M10+1+(lt<2))))}
-              image.plot(z = c(min,max),col = Colors, horizontal=T,legend.only = T,axis.args=list( at=log(ticks), labels=ticks))
+              lt=length(ticks[ticks>exp(minr) & ticks<exp(maxr)])
+              if(lt<4){
+                  ticks=c(round(exp(minr),digit=2),max(0,-1*m10+(lt<2)),ticks,round(exp(maxr),digit = 2))
+                  }
+              image.plot(z = c(minr,maxr),col = Colors, horizontal=T,legend.only = T,axis.args=list( at=log(ticks), labels=ticks))
             }else{
               image.plot(z = as.matrix(rate1),col = Colors, horizontal=T,legend.only = T)
             }
-          }
+
         }else{
           if(log){
             rate1=log(rate1)
@@ -70,7 +70,10 @@ function create_plot_ClaDS_ape()
               }
               ticks=as.vector(sapply(m10:M10,function(k){return(ticks*10^k)}))
               lt=length(ticks[ticks>exp(min) & ticks<exp(max)])
-              if(lt<4){ticks=c(round(exp(min),max(0,-1*m10+(lt<2))),ticks,round(exp(max),max(0,-1*M10+1+(lt<2))))}
+              if(lt<4){
+
+                  ticks=c(round(exp(min),max(0,-1*m10+(lt<2))),ticks,round(exp(max),max(0,-1*M10+1+(lt<2))))
+                  }
               # ticks=seq(min,max,length.out = 5)
               image.plot(z = c(min,max),col = Colors, horizontal=T,legend.only = T,axis.args=list( at=log(ticks), labels=ticks))
             }else{
@@ -120,10 +123,10 @@ function create_plot_ClaDS_ape()
               col = round(( (rate2 - min(rate2)) / (max(rate2)-min(rate2)))*99   )+1
               plot(phylo, edge.color = Colors[col], show.tip.label = show_labels,edge.width =lwd,...)
               if(log){
-                min=min(rate2)
-                max=max(rate2)
-                m10=floor(min/log(10))
-                M10=ceiling(max/log(10))
+                minr=min(rate2)
+                maxr=max(rate2)
+                m10=floor(minr/log(10))
+                M10=ceiling(maxr/log(10))
                 if((M10-m10)<4){
                   ticks=c(1,2,5)
                 }else{
@@ -156,6 +159,13 @@ Plot a tree with branch rates from Julia
 function plot_ClaDS(tree::Tree ; id = 1, ln=true, lwd=3, show_labels = false, options="")
     plot_tree = Tree(tree.offsprings, 0., tree.attributes, tree.n_nodes)
 
+    opt = options
+    if length(options) > 0
+        if options[1] != ","[1]
+            opt = ", $options"
+        end
+    end
+
     edges, branch_lengths, rates, tip_labels = Tree2ape(plot_tree, id = 1)
     ntip = (tree.n_nodes + 1)/2
     @rput edges
@@ -171,7 +181,7 @@ function plot_ClaDS(tree::Tree ; id = 1, ln=true, lwd=3, show_labels = false, op
     reval("""
         tree = list(edge = edges, Nnode = ntip - 1, edge.lengths = branch_lengths, tip.labels = tip_labels)
         class(tree) = "phylo"
-        plot_ClaDS(tree, rates, log=ln, lwd=lwd, show_labels = show_labels $options)
+        plot_ClaDS(tree, rates, log=ln, lwd=lwd, show_labels = show_labels $opt)
     """)
 end
 
@@ -179,36 +189,29 @@ end
 function plot_ClaDS(tree::Tree, rates ; id = 1, ln=true, lwd=3, round = false)
     plot_tree = Tree(tree.offsprings, 0., tree.attributes, tree.n_nodes)
 
-    create_plot_ClaDS_ape()
-    reval("""
-        tree = list(edge = edges, Nnode = ntip - 1, edge.lengths = branch_lengths, tip.labels = tip_labels)
-        class(tree) = "phylo"
-        plot_ClaDS(tree, rates, log=ln, lwd=lwd, show_labels = show_labels $options)
-    """)
-    if round
-        reval("""
-        source("/Users/maliet/ownCloud/My_folder/ClaDS_Julia/plot_ClaDS_round.R")
-        """)
-    else
-        reval("""
-        source("/Users/maliet/ownCloud/My_folder/ClaDS_Julia/plot_ClaDS.R")
-        """)
+    opt = options
+    if length(options) > 0
+        if options[1] != ","[1]
+            opt = ", $options"
+        end
     end
 
-    edges, branch_lengths, new_rates = Tree2ape(plot_tree, id = 1)
+    edges, branch_lengths, tree_rates, tip_labels = Tree2ape(plot_tree, id = 1)
     ntip = (tree.n_nodes + 1)/2
-
     @rput edges
     @rput branch_lengths
     @rput rates
     @rput ntip
     @rput ln
     @rput lwd
+    @rput show_labels
+    @rput tip_labels
 
+    create_plot_ClaDS_ape()
     reval("""
-        tree = list(edge = edges, Nnode = ntip - 1, edge.lengths = branch_lengths, tip.labels = 1:ntip)
+        tree = list(edge = edges, Nnode = ntip - 1, edge.lengths = branch_lengths, tip.labels = tip_labels)
         class(tree) = "phylo"
-        plot_ClaDS(tree, rates, log=ln, lwd=lwd)
+        plot_ClaDS(tree, rates, log=ln, lwd=lwd, show_labels = show_labels $opt)
     """)
 end
 
