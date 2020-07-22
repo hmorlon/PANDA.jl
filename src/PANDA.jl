@@ -6,7 +6,7 @@
 
 module PANDA
 
-__precompile__(false) #put back to true when checking done
+__precompile__(true) #put back to true when checking done
 
 #=
  Submodules
