@@ -7,8 +7,9 @@
 module ClaDS
 
 using Random: randexp
-using Distributions: Bernoulli, LogNormal, Weights, sample
-using RCall: @rput, reval
+using Distributions: Bernoulli, LogNormal, Weights, sample, Normal, InverseGamma
+using RCall: @rput, @rget, reval
+using Statistics: mean
 
 # other submodules dependencies
 using ..Utils
@@ -18,8 +19,17 @@ include("clads/tree_class.jl")
 include("clads/sim_ClaDS_utils.jl")
 include("clads/sim_ClaDS.jl")
 include("clads/plot_ClaDS.jl")
-
-
-export sim_ClaDS2_ntips, plot_ClaDS
+include("clads/infer_ClaDS2.jl")
+include("clads/mcmc_ClaDS2_utils.jl")
+include("clads/sample_fractions.jl")
+include("clads/enhance_tree_utils.jl")
+include("clads/LTT.jl")
+include("clads/n_tips.jl")
+include("clads/Tree_utils.jl")
+include("clads/branch_lengths.jl")
+include("clads/RTT.jl")
+include("clads/enhance_tree.jl")
+include("clads/rates.jl")
+include("clads/gibbs.jl")
 
 end # module ClaDS

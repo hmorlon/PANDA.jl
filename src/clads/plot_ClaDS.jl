@@ -8,7 +8,7 @@ function create_plot_ClaDS_ape()
     require(ape)
     require(RColorBrewer)
 
-    plot_ClaDS=function(phylo,rate1,rate2=NULL,same.scale=T,main=NULL,lwd=1,log=F, show_labels=F, minr = Inf, maxr = 0,...){
+    plot_ClaDS=function(phylo,rate1,rate2=NULL,same.scale=T,main=NULL,lwd=1,log=T, show_labels=F, minr = Inf, maxr = 0,...){
         Colors = colorRampPalette(rev(c('darkred',brewer.pal(n = 8, name = "Spectral"),'darkblue')))(100)
 
      if(nrow(phylo[[1]]) <=1){
@@ -19,10 +19,13 @@ function create_plot_ClaDS_ape()
           if(log) {
               rate1=log(rate1)
               minr = log(minr)
-              maxr = log(maxr)}
-
-            minr = min(c(minr, 0.95*max(rate1),min(rate1)))
-            maxr = max(c(maxr, 1.05*min(rate1), max(rate1)))
+              maxr = log(maxr)
+              minr = min(c(minr, log(0.95)+max(rate1),min(rate1)))
+              maxr = max(c(maxr, log(1.05)+min(rate1), max(rate1)))
+              }else{
+                minr = min(c(minr, 0.99*max(rate1),min(rate1)))
+                maxr = max(c(maxr, 1.01*min(rate1), max(rate1)))
+              }
 
             col = round( (rate1 - minr) / (maxr - minr)*99   )+1
             plot(phylo, edge.color = Colors[col], show.tip.label = show_labels,main=main,edge.width =lwd,...)
