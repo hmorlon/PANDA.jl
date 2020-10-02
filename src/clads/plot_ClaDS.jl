@@ -8,7 +8,7 @@ function create_plot_ClaDS_ape()
     require(ape)
     require(RColorBrewer)
 
-    plot_ClaDS=function(phylo,rate1,rate2=NULL,same.scale=T,main=NULL,lwd=1,log=T, show_labels=F, minr = Inf, maxr = 0,...){
+    plot_ClaDS=function(phylo,rate1,rate2=NULL,same.scale=T,main=NULL,lwd=1,log=T, show_labels=F, minr = Inf, maxr = 0, show_legend = T,...){
         Colors = colorRampPalette(rev(c('darkred',brewer.pal(n = 8, name = "Spectral"),'darkblue')))(100)
 
      if(nrow(phylo[[1]]) <=1){
@@ -44,9 +44,9 @@ function create_plot_ClaDS_ape()
               if(lt<4){
                   ticks=c(round(exp(minr),digit=2),max(0,-1*m10+(lt<2)),ticks,round(exp(maxr),digit = 2))
                   }
-              image.plot(z = c(minr,maxr),col = Colors, horizontal=T,legend.only = T,axis.args=list( at=log(ticks), labels=ticks))
+              if(show_legend) image.plot(z = c(minr,maxr),col = Colors, horizontal=T,legend.only = T,axis.args=list( at=log(ticks), labels=ticks))
             }else{
-              image.plot(z = as.matrix(rate1),col = Colors, horizontal=T,legend.only = T)
+              if(show_legend) image.plot(z = as.matrix(rate1),col = Colors, horizontal=T,legend.only = T)
             }
 
         }else{
@@ -78,9 +78,9 @@ function create_plot_ClaDS_ape()
                   ticks=c(round(exp(min),max(0,-1*m10+(lt<2))),ticks,round(exp(max),max(0,-1*M10+1+(lt<2))))
                   }
               # ticks=seq(min,max,length.out = 5)
-              image.plot(z = c(min,max),col = Colors, horizontal=T,legend.only = T,axis.args=list( at=log(ticks), labels=ticks))
+              if(show_legend) image.plot(z = c(min,max),col = Colors, horizontal=T,legend.only = T,axis.args=list( at=log(ticks), labels=ticks))
             }else{
-              image.plot(z = c(min,max),col = Colors, horizontal=T,legend.only = T)
+              if(show_legend) image.plot(z = c(min,max),col = Colors, horizontal=T,legend.only = T)
             }
           }else{
             par(mfrow=c(1,2))
@@ -89,9 +89,9 @@ function create_plot_ClaDS_ape()
               plot(phylo, edge.color = Colors[col], show.tip.label = show_labels,edge.width =lwd,...)
               if(log){
 
-                image.plot(z = c(exp(rate1[1]),2*exp(rate1[1])),col = Colors, horizontal=T,legend.only = T)
+                if(show_legend) image.plot(z = c(exp(rate1[1]),2*exp(rate1[1])),col = Colors, horizontal=T,legend.only = T)
               }else{
-                image.plot(z = c(rate1[1],2*rate1[1]),col = Colors, horizontal=T,legend.only = T)
+                if(show_legend) image.plot(z = c(rate1[1],2*rate1[1]),col = Colors, horizontal=T,legend.only = T)
               }
             }else{
               col = round(( (rate1 - min(rate1)) / (max(rate1)-min(rate1)))*99   )+1
@@ -109,18 +109,18 @@ function create_plot_ClaDS_ape()
                 ticks=as.vector(sapply(m10:M10,function(k){return(ticks*10^k)}))
                 lt=length(ticks[ticks>exp(min) & ticks<exp(max)])
                 if(lt<4){ticks=c(round(exp(min),max(0,-1*m10+(lt<2))),ticks,round(exp(max),max(0,-1*M10+1+(lt<2))))}
-                image.plot(z = c(min,max),col = Colors, horizontal=T,legend.only = T,axis.args=list( at=log(ticks), labels=ticks))
+                if(show_legend) image.plot(z = c(min,max),col = Colors, horizontal=T,legend.only = T,axis.args=list( at=log(ticks), labels=ticks))
               }else{
-                image.plot(z = as.matrix(rate1),col = Colors, horizontal=T,legend.only = T)
+                if(show_legend) image.plot(z = as.matrix(rate1),col = Colors, horizontal=T,legend.only = T)
               }
             }
             if(isTRUE(all.equal(rep(rate2[1],length(rate2)),rate2))){
               col=rep(1,length(rate2))
               plot(phylo, edge.color = Colors[col], show.tip.label = show_labels,edge.width =lwd,...)
               if(log){
-                image.plot(z = c(exp(rate2[1]),2*exp(rate2[1])),col = Colors, horizontal=T,legend.only = T)
+                if(show_legend) image.plot(z = c(exp(rate2[1]),2*exp(rate2[1])),col = Colors, horizontal=T,legend.only = T)
               }else{
-                image.plot(z = c(rate2[1],2*rate2[1]),col = Colors, horizontal=T,legend.only = T)
+                if(show_legend) image.plot(z = c(rate2[1],2*rate2[1]),col = Colors, horizontal=T,legend.only = T)
               }
             }else{
               col = round(( (rate2 - min(rate2)) / (max(rate2)-min(rate2)))*99   )+1
@@ -138,16 +138,16 @@ function create_plot_ClaDS_ape()
                 ticks=as.vector(sapply(m10:M10,function(k){return(ticks*10^k)}))
                 lt=length(ticks[ticks>exp(min) & ticks<exp(max)])
                 if(lt<4){ticks=c(round(exp(min),max(0,-1*m10+(lt<2))),ticks,round(exp(max),max(0,-1*M10+1+(lt<2))))}
-                image.plot(z = c(min,max),col = Colors, horizontal=T,legend.only = T,axis.args=list( at=log(ticks), labels=ticks))
+                if(show_legend) image.plot(z = c(min,max),col = Colors, horizontal=T,legend.only = T,axis.args=list( at=log(ticks), labels=ticks))
               }else{
-                image.plot(z = as.matrix(rate2),col = Colors, horizontal=T,legend.only = T)
+                if(show_legend) image.plot(z = as.matrix(rate2),col = Colors, horizontal=T,legend.only = T)
               }
             }
           }
           par(mfrow=c(1,1))
         }
       }
-
+      if(!show_legend) return(list(Colors = Colors, col = col, minr = minr, maxr = maxr))
     }
     """)
 end
@@ -184,7 +184,7 @@ function plot_ClaDS(tree::Tree ; id = 1, ln=true, lwd=3, show_labels = false, op
     reval("""
         tree = list(edge = edges, Nnode = ntip - 1, edge.lengths = branch_lengths, tip.labels = tip_labels)
         class(tree) = "phylo"
-        plot_ClaDS(tree, rates, log=ln, lwd=lwd, show_labels = show_labels $opt)
+        colors = plot_ClaDS(tree, rates, log=ln, lwd=lwd, show_labels = show_labels $opt);
     """)
 end
 

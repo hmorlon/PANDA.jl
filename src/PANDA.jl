@@ -35,6 +35,6 @@ export esse, simulate_sse
 using .TRIBE: tribe, simulate_tribe
 export tribe, simulate_tribe
 
-using .ClaDS: Tree, sim_ClaDS2_ntips, plot_ClaDS, infer_ClaDS
-export Tree, sim_ClaDS2_ntips, plot_ClaDS, infer_ClaDS
+using .ClaDS: Tree, sim_ClaDS2_ntips, plot_ClaDS, infer_ClaDS, CladsOutput
+export Tree, sim_ClaDS2_ntips, plot_ClaDS, infer_ClaDS, CladsOutput
 end # module PANDA

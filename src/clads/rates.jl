@@ -113,6 +113,7 @@ function extract_rates(tree::Tree; id=1)
     return(rates)
 end
 
+#=
 function update_rates!(tree::Tree, rates::Array{T,1} ; id = 1) where {T<:Number}
     function aux(sub_tree, sub_rates)
         if sub_tree.n_nodes < 2
@@ -149,7 +150,7 @@ function update_rates!(tree::Tree, rate::T ; id = 1) where {T<:Number}
 
     aux(tree)
 end
-
+=#
 
 function extract_tip_rates(tree::Tree, edge_trees::Array{EdgeTreeRates2,1},
     tips_id::Array{Bool,1}, rates::Array{Float64,1} ; id = 1, return_extinct = true)

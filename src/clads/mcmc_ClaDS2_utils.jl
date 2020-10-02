@@ -1,3 +1,30 @@
+struct CladsOutput
+    tree::Tree
+    chains::Array{Array{Array{Float64,1},1},1}
+    rtt_chains::Array{Array{Array{Float64,1},1},1}
+    σ_map::Float64
+    α_map::Float64
+    ε_map::Float64
+    λ0_map::Float64
+    λi_map::Array{Float64,1}
+    λtip_map::Array{Float64,1}
+    DTT_mean::Array{Float64,1}
+    RTT_map::Array{Float64,1}
+    time_points::Array{Float64,1}
+    enhanced_trees::Array{Tree,1}
+    gelm::Tuple{Int64,Float64}
+    current_state # all the rest that is mising to continue the run
+end
+
+function CladsOutput()
+    return CladsOutput(
+        Tree(),
+        Array{Array{Array{Float64,1},1},1}(undef,0),
+        Array{Array{Array{Float64,1},1},1}(undef,0),
+        0.,0.,0.,0.,[0.],[0.],[0.],[0.],
+        [0.],[Tree()],(0,10.),0.
+    )
+end
 
 function plot_coda(sampler ; burn = 0, thin = 1, id_par = [1:4...], smooth = false)
     chains = sampler[1]
@@ -34,13 +61,13 @@ function add_to_chain!(chain, param)
     end
 end
 
-function initialize_ClaDS2(tree::Tree ; ini_par = [], initialize_rates = 0, ltt_steps = 10, enhance_method = "reject", n_chains = 3) where {N}
+function initialize_ClaDS2(tree::Tree ; ini_par = [], initialize_rates = 0, ltt_steps = 10, enhance_method = "reject", n_chains = 3, n_trees = 10) where {N}
 
     new_tree = Tree(deepcopy(tree.offsprings), 0., deepcopy(tree.attributes))
 
     root_depth = maximum(node_depths(new_tree)) * 1.01
     live_nd = node_depths_base(new_tree)
-    println(root_depth)
+
     ltt_times = [0:ltt_steps...] * root_depth/ltt_steps
     ltt_extant = LTT(tree,ltt_times)
     if length(ini_par) == 0
@@ -74,12 +101,13 @@ function initialize_ClaDS2(tree::Tree ; ini_par = [], initialize_rates = 0, ltt_
     param = deepcopy(ini_par)
     mean_rates_chains = [[time_rates(tree,ini_par[i][4:(tree.n_nodes+3)],ltt_times)] for i in 1:n_chains]
     println(" ")
-    return chains, param, edge_trees_s, trees, extant_branch_lengths, ltt_times, live_nd, mean_rates_chains
+    return chains, param, edge_trees_s, trees, extant_branch_lengths, ltt_times, live_nd, mean_rates_chains, Array{Tree,1}(undef,0)
 end
 
 function add_iter_ClaDS2(sampler, n_reccord::Int64; thin = 1, fs = 1., plot_tree = 0, print_state = 0, quad = 1,
-    max_node_number = 1_000, max_try = 100_000, it_edge_tree = 1, print_all = false, it_rates = 1, enhance_method = "reject")
-    chain_s, param_s, edge_trees_s, tree_s, extant_branch_lengths, ltt_times, live_nd, mean_rates_chains = sampler
+    max_node_number = 1_000, max_try = 100_000, it_edge_tree = 1, print_all = false, it_rates = 1, enhance_method = "reject", n_trees = 10)
+
+    chain_s, param_s, edge_trees_s, tree_s, extant_branch_lengths, ltt_times, live_nd, mean_rates_chains, enhanced_trees = sampler
 
     n_chains = length(chain_s)
     tips_id = tips(tree_s[1])[2:end]
@@ -140,6 +168,18 @@ function add_iter_ClaDS2(sampler, n_reccord::Int64; thin = 1, fs = 1., plot_tree
                     end
                 end
 
+                if length(enhanced_trees) < n_trees
+                    enhanced_tree = graft_edge_trees(tree, edge_trees)
+                    push!(enhanced_trees, enhanced_tree)
+                else
+                    u = rand()
+                    if u < 0.1*n_trees/i
+                        enhanced_tree = graft_edge_trees(tree, edge_trees)
+                        itree = sample(1:n_trees)
+                        enhanced_trees[itree] = enhanced_tree
+                    end
+                end
+
                 #println(" 3 nnn")
 
             end
@@ -161,7 +201,7 @@ function add_iter_ClaDS2(sampler, n_reccord::Int64; thin = 1, fs = 1., plot_tree
             add_to_chain!(chain_s[k], param_s[k])
             #println(time_rates(tree,edge_trees,ltt_times))
             #println(mean_rates_chains)
-            for imr in 1:3
+            for imr in 1
                 #add_to_chain!(mean_rates_chains[k], time_rates(tree,edge_trees,ltt_times))
                 push!(mean_rates_chains[k], time_rates(tree,edge_trees,ltt_times))
             end
@@ -170,7 +210,7 @@ function add_iter_ClaDS2(sampler, n_reccord::Int64; thin = 1, fs = 1., plot_tree
     end
 
     println(" ")
-    return chain_s, param_s, edge_trees_s, tree_s, extant_branch_lengths, ltt_times, live_nd, mean_rates_chains
+    return chain_s, param_s, edge_trees_s, tree_s, extant_branch_lengths, ltt_times, live_nd, mean_rates_chains, enhanced_trees
 end
 
 

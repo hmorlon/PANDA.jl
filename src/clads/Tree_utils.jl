@@ -68,6 +68,23 @@ function update_rates!(tree::Tree, rates::Array{T,1}, edge_trees ; id = 1) where
     return tree, edge_trees
 end
 
+
+function update_rates!(tree::Tree, rate::T ; id = 1) where {T<:Number}
+    function aux(sub_tree)
+        if sub_tree.n_nodes < 2
+            sub_tree.attributes[id] *= rate
+        else
+            sub_tree.attributes[id] *= rate
+            t1 = sub_tree.offsprings[1]
+            aux(t1)
+            t2 = sub_tree.offsprings[2]
+            aux(t2)
+        end
+    end
+
+    aux(tree)
+end
+
 function get_parent_edge(tree::Tree, edge_id::Int64)
     if edge_id == 0
         return NaN
