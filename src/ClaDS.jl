@@ -16,6 +16,7 @@ using ..Utils
 
 # files
 include("clads/tree_class.jl")
+include("clads/clads_output.jl")
 include("clads/enhance_tree_utils.jl")
 include("clads/sim_ClaDS_utils.jl")
 include("clads/sim_ClaDS.jl")

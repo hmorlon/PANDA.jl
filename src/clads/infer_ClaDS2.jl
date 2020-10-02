@@ -157,6 +157,7 @@ function infer_ClaDS(tree::Tree, n_reccord::Int64; ini_par = [], initialize_rate
         MAPS=sapply(1:npar2, function(i){D=density(unlist_chains[,i]);
             return(D[[1]][which.max(D[[2]])])})
         MAPS[2] = exp(MAPS[2])
+        MAPS[4:npar] = exp(MAPS[4:npar])
 
         mean_ltt = sapply((npar + ntips + 3):npar2, function(i){mean(unlist_chains[,i])})
         unlist_chains = list()

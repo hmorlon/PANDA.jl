@@ -189,7 +189,7 @@ function plot_ClaDS(tree::Tree ; id = 1, ln=true, lwd=3, show_labels = false, op
 end
 
 # specifying the tree and a vector of rates
-function plot_ClaDS(tree::Tree, rates ; id = 1, ln=true, lwd=3, round = false)
+function plot_ClaDS(tree::Tree, rates ; id = 1, ln=true, lwd=3, round = false, options = "", show_labels=false)
     plot_tree = Tree(tree.offsprings, 0., tree.attributes, tree.n_nodes)
 
     opt = options
@@ -243,4 +243,164 @@ function plot_ClaDS(tree::Tree, rates1, rates2 ; id = 1, ln=true, lwd=3)
         leg = plot_ClaDS_noLeg(tree, rates2, rates1, log=ln, lwd=lwd)
         image.plot(z = leg[[1]],col = leg[[2]], horizontal=F,legend.only = T,axis.args=leg[[5]], legend.mar=4.5)
     """)
+end
+
+
+# diversity through time
+function plot_DTT(co::CladsOutput; nyl = 1000, n_ltt = 100, alpha_col = 0.05, burn = 0.25,
+	thin = 1, axes_cex = 1., lwd = 1., lab_cex = 1.) where {T <: Number}
+
+	extant_tree = co.tree
+	chains = co.chains
+    npar = extant_tree.n_nodes + 3 + (extant_tree.n_nodes+1)/2
+    ltt_times = co.time_points
+    maps = co.DTT_mean
+
+    new_tree = Tree(extant_tree.offsprings, 0., extant_tree.attributes)
+    live_ltt = LTT(new_tree, ltt_times)[2]
+
+    @rput chains
+    @rput maps
+    @rput npar
+    @rput ltt_times
+    @rput n_ltt
+    @rput alpha_col
+    @rput burn
+    @rput thin
+    @rput live_ltt
+	@rput axes_cex
+	@rput lab_cex
+    @rput nyl
+    reval("""
+        require(coda)
+        id_ltt = (npar+3):length(chains[[1]])
+        n_row = length(chains[[1]][[1]])
+        ini = floor(burn * n_row)
+        if(ini == 0) ini = 1
+        it = seq(ini, n_row, thin)
+        npar2 = length(chains[[1]])
+        map_chains = mcmc.list(lapply(1:3, function(i){
+            mcmc(sapply(id_ltt, function(j){
+                if(j<4 || (j>npar )){#}& j<(npar +3))) {
+                    chains[[i]][[j]][it]
+                }else{
+                    log(chains[[i]][[j]][it])
+                }
+        }))}))
+        unlist_chains = (sapply(1:length(id_ltt), function(k){
+            c(map_chains[[1]][,k], map_chains[[2]][,k], map_chains[[3]][,k])
+            }))
+		y_max = max(unlist_chains)
+        #maps_log=sapply(1:npar2, function(i){D=density(unlist_chains[,i]);
+        #    return(D[[1]][which.max(D[[2]])])})
+
+        means=sapply(1:length(id_ltt), function(i){if(T){log(mean(unlist_chains[,i]))}else{mean(unlist_chains[,i])}})
+    """)
+
+    reval("""
+        library(scales)
+        plot(100000, axes = F, xlim = range(ltt_times), ylim = log(c(2,y_max)), xlab = "time",
+        ylab = "nb lineages", cex.lab = lab_cex)
+        y_lab = c(2,5,10,50,100,200,500,1000,2000,5000,10000,20000,50000)
+        y_lab = y_lab[y_lab<=y_max]
+        if(nyl < length(y_lab)){
+            y_lab = y_lab[unique(floor(seq(1,length(y_lab), length.out = nyl)))]
+            }
+        lines(ltt_times, log(live_ltt), col = "black", lwd = 6, lty = 1)
+
+        id_plot = unique(floor(seq(ini, n_row, length.out = n_ltt)))#unique(floor(seq(2,length(chains[[1]][[1]]), length.out = n_ltt)))
+
+        Ys = c()
+        for (i in 1:3){
+            for (j in id_plot){
+                y = sapply(id_ltt, function(k){log(chains[[i]][[k]][j])})
+                Ys = rbind(Ys,y)
+                lines(ltt_times, y, col = alpha("deepskyblue2", alpha = alpha_col), lwd = 2)
+                }
+            }
+        quant = sapply(1:ncol(Ys), function(i){quantile(Ys[,i], probs = c(0.05,0.95))})
+
+        lines(ltt_times, quant[1,], col = "deepskyblue3", lwd = 2)
+        lines(ltt_times, quant[2,], col = "deepskyblue3", lwd = 2)
+        lines(ltt_times, log(maps[id_ltt]), col = "cadetblue1", lwd = 5, lty = 1)
+        lines(ltt_times, log(maps[id_ltt]), col = "cadetblue4", lwd = 3, lty = 6)
+
+        lines(ltt_times, means[1:length(id_ltt)], col = "darkseagreen1", lwd = 5, lty = 1)
+        lines(ltt_times, means[1:length(id_ltt)], col = "darkseagreen4", lwd = 3, lty = 6)
+
+        axis(1, cex.axis = axes_cex, lwd = lwd, lwd.ticks = lwd)
+        axis(2, at = log(y_lab), lab = y_lab, cex.axis = axes_cex, lwd = lwd, lwd.ticks = lwd)
+
+        #print(log(maps[id_ltt]) - maps_log[id_ltt])
+    """)
+end
+
+
+function plot_RTT(co::CladsOutput ;nplot = 50, miny = -1, maxy = 1, alpha_col = 0.05, burn = 0., axes_cex = 1., lwd = 1., lab_cex = 1., lay = 5)
+
+	times = co.time_points[2:end]
+	RTT_map = co.RTT_map
+    N = length(co.rtt_chains[1])
+    t = times#[1:length(tr)]
+    plot_id = Array{Int64,1}(floor.(range(2+ floor(burn * N), length=nplot, stop=N)))
+    mean_mr = zeros(length(times))
+    a = Array{Float64,1}(undef,0)
+    map_mr = [deepcopy(a) for i in 1:length(times)]
+	range_RTT = [minimum(minimum(minimum(co.rtt_chains)[2:end]));maximum(maximum(maximum(co.rtt_chains)[2:end]))]
+    @rput t
+    @rput miny
+    @rput maxy
+    @rput alpha_col
+	@rput lab_cex
+	@rput axes_cex
+	@rput lay
+	@rput RTT_map
+	@rput range_RTT
+
+    reval("""
+		ylim = log(range_RTT)#+c(miny,maxy)
+		print(exp(ylim))
+        library(scales)
+        plot(100000, axes = F, xlim = range(t), ylim = ylim,
+        xlab = "time", ylab = "mean rate", cex.lab = lab_cex)
+    """)
+    n = 0
+    colors = ["deepskyblue2" ; "deepskyblue2" ; "deepskyblue2"]
+
+    #colors = ["deepskyblue2" ; "orange2" ; "orangered3"]
+    for i in 1:3
+        color = colors[i]
+        @rput color
+        for k in plot_id
+            y = co.rtt_chains[i][k]
+            for j in 1:length(y)
+                push!(map_mr[j],log(y[j]))
+            end
+            @rput y
+            reval("""lines(t, log(y), col = alpha(color, alpha = alpha_col), lwd = 2)""")
+            mean_mr .+= y
+            n += 1
+        end
+    end
+
+    mean_mr ./= n
+    @rput mean_mr
+    @rput map_mr
+    reval("""
+        maps = log(RTT_map) #sapply(map_mr, function(x){D=density(x); return(D[[1]][which.max(D[[2]])])})
+		quant = sapply(map_mr, function(x){quantile(x, probs = c(0.05,0.95))})
+
+    """)
+    reval("""
+
+        lines(t, quant[1,], col = "deepskyblue3", lwd = 2)
+        lines(t, quant[2,], col = "deepskyblue3", lwd = 2)
+        lines(t, maps, col = "darkseagreen1", lwd = 5, lty = 1)
+        lines(t, maps, col = "darkseagreen4", lwd = 3, lty = 6)
+        axis(1, cex.axis = axes_cex, lwd = lwd, lwd.ticks = lwd)
+		labels_a2 = unique(signif(exp(seq(ylim[1], ylim[2], length.out = lay)), digits = 1))
+		print(labels_a2)
+		axis(2, at = log(labels_a2), labels = labels_a2, cex.axis = axes_cex, lwd = lwd, lwd.ticks = lwd)
+    """)
+
 end
