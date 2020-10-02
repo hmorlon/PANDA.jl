@@ -331,7 +331,6 @@ function plot_DTT(co::CladsOutput; nyl = 1000, n_ltt = 100, alpha_col = 0.05, bu
         axis(1, cex.axis = axes_cex, lwd = lwd, lwd.ticks = lwd)
         axis(2, at = log(y_lab), lab = y_lab, cex.axis = axes_cex, lwd = lwd, lwd.ticks = lwd)
 
-        #print(log(maps[id_ltt]) - maps_log[id_ltt])
     """)
 end
 
@@ -359,7 +358,6 @@ function plot_RTT(co::CladsOutput ;nplot = 50, miny = -1, maxy = 1, alpha_col = 
 
     reval("""
 		ylim = log(range_RTT)#+c(miny,maxy)
-		print(exp(ylim))
         library(scales)
         plot(100000, axes = F, xlim = range(t), ylim = ylim,
         xlab = "time", ylab = "mean rate", cex.lab = lab_cex)
@@ -399,7 +397,6 @@ function plot_RTT(co::CladsOutput ;nplot = 50, miny = -1, maxy = 1, alpha_col = 
         lines(t, maps, col = "darkseagreen4", lwd = 3, lty = 6)
         axis(1, cex.axis = axes_cex, lwd = lwd, lwd.ticks = lwd)
 		labels_a2 = unique(signif(exp(seq(ylim[1], ylim[2], length.out = lay)), digits = 1))
-		print(labels_a2)
 		axis(2, at = log(labels_a2), labels = labels_a2, cex.axis = axes_cex, lwd = lwd, lwd.ticks = lwd)
     """)
 
