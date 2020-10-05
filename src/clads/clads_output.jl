@@ -37,13 +37,18 @@ function print_CladsOutput(co::CladsOutput)
 end
 
 
-function plot_CladsOutput(co::CladsOutput ; method = "tree")
+function plot_CladsOutput(co::CladsOutput ; method = "tree",
+    nplot = 50, alpha_col = 0.05, options = "", id_par = 1)
 
     if method == "tree"
-        plot_ClaDS(co.tree,co.λi_map)
+        plot_ClaDS(co.tree,co.λi_map, options = options)
     elseif method == "DTT"
-        plot_DTT(co)
+        plot_DTT(co, n_ltt = nplot, alpha_col = alpha_col)
     elseif method == "RTT"
-        plot_RTT(co)
+        plot_RTT(co, nplot = nplot, alpha_col = alpha_col)
+    elseif method == "density"
+        plot_density(co, id_par)
+    elseif method == "chain"
+        plot_chain(co, id_par)
     end
 end

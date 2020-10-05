@@ -1,3 +1,17 @@
+function tip_labels(tree::Tree)
+    function aux(subtree, x)
+        if length(subtree.offsprings) == 0
+            pushfirst!(x,subtree.label)
+        else
+            aux(subtree.offsprings[2], x)
+            aux(subtree.offsprings[1], x)
+        end
+    end
+
+    x = Array{String,1}(undef,0)
+    aux(tree, x)
+    return x
+end
 
 function tips(tree::Tree)
     function aux(subtree, x)

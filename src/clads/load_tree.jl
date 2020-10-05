@@ -1,20 +1,4 @@
-#=
-Convert an object with R "phylo" structure to a julia Tree object
-=#
-
-function ape2Tree(phylo)
-    branches = Array{Int64,2}(phylo[:edge])
-    branch_lengths = phylo[:edge_length]
-    attribute = Array{Float64,1}(ones(length(branch_lengths)...))
-    tip_labels = phylo[:tip_label]
-    return build_tree(branches, branch_lengths, [attribute], tip_labels, root_attributes=[0.])
-end
-
-#=
-
-=#
-
-function Tree2ape(tree::Tree ; id = 1)
+function make_ape(tree::Tree ; id = 1)
     n_nodes = tree.n_nodes
     node_id = (n_nodes + 3)/2
 
@@ -46,13 +30,8 @@ function Tree2ape(tree::Tree ; id = 1)
     return tupple[1], tupple[2], tupple[3], tupple[6]
 end
 
-
-#=
-Buil a Tree object from a list of branches relationships and lengths, with branch rates
-=#
-
-function build_tree(branches::Array{Array{T1,1}}, branch_lengths::Array{Float64,1}, attributes::Array{Array{T2,1},1} ;
-    extinct = [], prune_extinct=true, return_void = false, stem_age=0., root_attributes = Array{T2,1}(undef,0)) where {T1<:Number, T2<:Number}
+function build_tree(branches::Array{Int64,2}, branch_lengths, attributes::Array{Array{T2,1},1}, tip_labels::Array{String,1} ;
+    extinct = [], prune_extinct=true, return_void = false, stem_age=0., root_attributes = Array{T2,1}(undef,0)) where {T2<:Number}
 
     n_attributes = length(attributes)
     if length(extinct) == 0
@@ -79,41 +58,37 @@ function build_tree(branches::Array{Array{T1,1}}, branch_lengths::Array{Float64,
     end
 
     root = -1
-    for b1 in branches
+    for i in branches[:,1]
         has_no_parent = true
-        for b2 in branches
-            if b1[1] == b2[2]
+        for j in branches[:,2]
+            if i == j
                 has_no_parent = false
                 break
             end
         end
         if has_no_parent
-            root = b1[1]
+            root = i
             break
         end
     end
 
-    max_node = -1
-    for b in branches
-        max_node = max(b[1], b[2], max_node)
-    end
-    max_node += 1
+    max_node = maximum(branches[:,1:2])+1
     offsprings = fill(-1,max_node,2)
     parent_edges = fill(-1,max_node)
     daughter_edges = fill(-1,max_node)
 
-    for i in 1:length(branches)
-        individual = branches[i][1]+1
+    for i in 1:size(branches)[1]
+        individual = branches[i,1]+1
         parent_edges[individual] = i
-        daughter_edges[branches[i][2]+1] = i
+        daughter_edges[branches[i,2]+1] = i
         if offsprings[individual,1] < 0
-            offsprings[individual,1] = branches[i][2]
+            offsprings[individual,1] = branches[i,2]
         else
-            offsprings[individual,2] = branches[i][2]
+            offsprings[individual,2] = branches[i,2]
         end
 
         if dead_branches[i]
-            individual = branches[i][2]+1
+            individual = branches[i,2]+1
             offsprings[individual,:]= [-2 -2]
         end
     end
@@ -121,7 +96,7 @@ function build_tree(branches::Array{Array{T1,1}}, branch_lengths::Array{Float64,
     if prune_extinct
         function aux(node)
             if offsprings[node+1,1]==-1
-                return Tree(Array{Tree,1}(undef,0),branch_lengths[daughter_edges[node + 1]], [attributes[p][daughter_edges[node + 1]] for p in 1:n_attributes])
+                return Tree(Array{Tree,1}(undef,0),branch_lengths[daughter_edges[node + 1]], [attributes[p][daughter_edges[node + 1]] for p in 1:n_attributes], tip_labels[node])
             elseif offsprings[node+1,1]==-2
                 return Tree()
             else
@@ -140,12 +115,12 @@ function build_tree(branches::Array{Array{T1,1}}, branch_lengths::Array{Float64,
                     return Tree()
                 elseif tree_left.n_nodes == 0
                     tree_right = Tree(tree_right.offsprings, tree_right.branch_length + add_time,
-                        add_attribute, tree_right.n_nodes)
+                        add_attribute, tree_right.n_nodes, tree_right.label)
 
                     return tree_right
                 elseif tree_right.n_nodes == 0
                     tree_left = Tree(tree_left.offsprings, tree_left.branch_length + add_time,
-                        add_attribute, tree_left.n_nodes)
+                        add_attribute, tree_left.n_nodes, tree_left.label)
                     return tree_left
                 else
                     return Tree([tree_left, tree_right], add_time, add_attribute)
@@ -158,7 +133,7 @@ function build_tree(branches::Array{Array{T1,1}}, branch_lengths::Array{Float64,
     else
         function aux_all(node)
             if offsprings[node+1,1]==-1
-                return Tree(Array{Tree,1}(undef,0),branch_lengths[daughter_edges[node + 1]], [attributes[p][daughter_edges[node + 1]] for p in 1:n_attributes], true)
+                return Tree(Array{Tree,1}(undef,0),branch_lengths[daughter_edges[node + 1]], [attributes[p][daughter_edges[node + 1]] for p in 1:n_attributes], true, tip_labels[node])
             elseif offsprings[node+1,1]==-2
                 return Tree(Array{Tree,1}(undef,0),branch_lengths[daughter_edges[node + 1]], [attributes[p][daughter_edges[node + 1]] for p in 1:n_attributes], false)
             else
@@ -178,12 +153,19 @@ function build_tree(branches::Array{Array{T1,1}}, branch_lengths::Array{Float64,
         return aux_all(root)
 
     end
-
 end
 
+function load_tree(file)
+    if file[(end-3):end] == ".tre"
+        @rput file
+        reval("""
+            require(ape)
+            temp_tree = read.tree(file)
+            print(temp_tree)
+        """)
+    end
+    @rget temp_tree
 
-function build_tree(branches::Array{Array{T1,1}}, branch_lengths::Array{Float64,1}, attributes::Array{T2,1} ;
-    extinct = [], prune_extinct=true, return_void = false, stem_age=0., root_attributes = Array{T2,1}(undef,0)) where {T1<:Number, T2<:Number}
-    build_tree(branches, branch_lengths, [attributes], extinct=extinct, prune_extinct=prune_extinct,
-        return_void = return_void, stem_age = stem_age, root_attributes= root_attributes)
+    reval(""" temp_tree = list() """)
+    return ape2Tree(temp_tree)
 end

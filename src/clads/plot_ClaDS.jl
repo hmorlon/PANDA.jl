@@ -401,3 +401,144 @@ function plot_RTT(co::CladsOutput ;nplot = 50, miny = -1, maxy = 1, alpha_col = 
     """)
 
 end
+
+function plot_density(co::CladsOutput, id_par::Int64, burn = 0.25)
+	n_par = length(co.chains[1])
+	n_tips = n_extant_tips(co.tree)
+	n_edges = (n_tips - 1)*2
+	nit = length(co.chains[1][1])
+	init = Int64(ceil(burn * nit))
+	if id_par >= 5 + n_edges + n_tips
+		id_par += 2
+	end
+
+	if id_par <= n_par
+		if id_par == 1				#σ
+			name = "sigma"
+			map = co.σ_map
+		elseif id_par == 2			#α
+			name = "alpha"
+			map = co.α_map
+		elseif id_par == 3			#ε
+			name = "epsilon"
+			map = co.ε_map
+		elseif id_par == 4			#λ_0
+			name = "lambda_0"
+			map = co.λ0_map
+		elseif id_par < 5 + n_edges #λ_i
+			i = id_par - 4
+			name = "lambda_$i"
+			map = co.λi_map[i]
+		elseif id_par < 5 + n_edges + n_tips						#λ_tip_i
+			i = id_par - 4 - n_edges
+			tip_name = tip_labels(co.tree)[i]
+			name = "lambda_tip $i"
+			if length(tip_name)>0
+				name = "lambda_tip $tip_name"
+			end
+			map = co.λtip_map[i]
+			println(map)
+		else
+			i = id_par - (6 + n_edges + n_tips)
+			name = "number of lineages (time $(co.time_points[i]))"
+			map = co.DTT_mean[i]
+		end
+
+		chain = [co.chains[i][id_par][j] for i in 1:length(co.chains) for j in init:length(co.chains[1][1])]
+	else
+
+		i = id_par - n_par
+		name = "mean rate (time $(co.time_points[i]))"
+		map = co.RTT_map[i]
+
+		chain = [co.rtt_chains[i][j][id_par - n_par] for i in 1:length(co.rtt_chains) for j in init:length(co.rtt_chains[1])]
+	end
+	@rput chain
+	@rput name
+	@rput map
+	@rput id_par
+	@rput n_par
+
+	reval("""
+		if (id_par < 5 ){
+			d = density(chain)
+			plot(d\$x, d\$y, type = 'l', lwd = 3, xlab = name, ylab = "density")
+		}else{
+			d = density(log(chain))
+			plot(exp(d\$x), d\$y, type = 'l', lwd = 3, xlab = name, ylab = "density", log = 'x')
+		}
+		abline(v = map, lwd = 3, col = "orange")
+
+		color_q = adjustcolor("coral3", alpha.f = 0.1)
+		quant = quantile(chain, c(0.025,0.975))
+		polygon(quant[c(1,2,2,1)], c(-1,-1,100000,100000), col = color_q, border = NA)
+
+	""")
+end
+
+function plot_chain(co::CladsOutput, id_par::Int64, burn = 0.25)
+	n_par = length(co.chains[1])
+	n_tips = n_extant_tips(co.tree)
+	n_edges = (n_tips - 1)*2
+	nit = length(co.chains[1][1])
+	init = Int64(ceil(burn * nit))
+	if id_par >= 5 + n_edges + n_tips
+		id_par += 2
+	end
+
+	if id_par <= n_par
+		if id_par == 1				#σ
+			name = "sigma"
+			map = co.σ_map
+		elseif id_par == 2			#α
+			name = "alpha"
+			map = co.α_map
+		elseif id_par == 3			#ε
+			name = "epsilon"
+			map = co.ε_map
+		elseif id_par == 4			#λ_0
+			name = "lambda_0"
+			map = co.λ0_map
+		elseif id_par < 5 + n_edges #λ_i
+			i = id_par - 4
+			name = "lambda_$i"
+			map = co.λi_map[i]
+		elseif id_par < 5 + n_edges + n_tips						#λ_tip_i
+			i = id_par - 4 - n_edges
+			tip_name = tip_labels(co.tree)[i]
+			name = "lambda_tip $i"
+			if length(tip_name)>0
+				name = "lambda_tip $tip_name"
+			end
+			map = co.λtip_map[i]
+			println(map)
+		else
+			i = id_par - (6 + n_edges + n_tips)
+			name = "number of lineages (time $(co.time_points[i]))"
+			map = co.DTT_mean[i]
+		end
+
+		chain = [co.chains[i][id_par][init:length(co.chains[1][1])] for i in 1:length(co.chains)]
+	else
+
+		i = id_par - n_par
+		name = "mean rate (time $(co.time_points[i]))"
+		map = co.RTT_map[i]
+
+		chain = Array{Array{Float64,1},1}(undef,0)
+		for i in 1:length(co.rtt_chains)
+			push!(chain, [co.rtt_chains[i][j][id_par - n_par] for j in init:length(co.rtt_chains[1])])
+		end
+	end
+	@rput chain
+	@rput name
+	@rput map
+	@rput id_par
+	@rput n_par
+
+	reval("""
+		require("coda")
+		traceplot(mcmc.list(lapply(chain, mcmc)), ylab = name)
+
+	""")
+end

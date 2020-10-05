@@ -35,7 +35,9 @@ export esse, simulate_sse
 using .TRIBE: tribe, simulate_tribe
 export tribe, simulate_tribe
 
-using .ClaDS: Tree, sim_ClaDS2_ntips, plot_ClaDS, infer_ClaDS, CladsOutput, print_CladsOutput, plot_CladsOutput
-export Tree, sim_ClaDS2_ntips, plot_ClaDS, infer_ClaDS, CladsOutput, print_CladsOutput, plot_CladsOutput
+using .ClaDS: Tree, sim_ClaDS2_ntips, plot_ClaDS, infer_ClaDS,
+    CladsOutput, print_CladsOutput, plot_CladsOutput, load_tree
+export Tree, sim_ClaDS2_ntips, plot_ClaDS, infer_ClaDS,
+    CladsOutput, print_CladsOutput, plot_CladsOutput, load_tree
 
 end
