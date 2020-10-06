@@ -37,11 +37,11 @@ export tribe, simulate_tribe
 
 using .ClaDS: Tree, tip_labels, n_tips,
     sim_ClaDS2_ntips, plot_ClaDS, infer_ClaDS,
-    CladsOutput, print_CladsOutput, plot_CladsOutput, load_tree,
-    save_ClaDS_in_R
-export Tree, tip_labels, n_tips, 
+    CladsOutput, print_CladsOutput, plot_CladsOutput, tip_rate,
+    load_tree, save_ClaDS_in_R
+export Tree, tip_labels, n_tips,
     sim_ClaDS2_ntips, plot_ClaDS, infer_ClaDS,
-    CladsOutput, print_CladsOutput, plot_CladsOutput, load_tree,
-    save_ClaDS_in_R
+    CladsOutput, print_CladsOutput, plot_CladsOutput, tip_rate,
+    load_tree, save_ClaDS_in_R
 
 end

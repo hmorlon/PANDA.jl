@@ -52,3 +52,21 @@ function plot_CladsOutput(co::CladsOutput ; method = "tree",
         plot_chain(co, id_par)
     end
 end
+
+
+function tip_rate(co::CladsOutput, sp_name::String)
+    number = 0
+    dist = Inf
+    tip_labs = tip_labels(co.tree)
+    for itl in 1:length(tip_labs)
+        d = Levenshtein()(sp_name, tip_labs[itl])
+        if d < dist
+            dist = d
+            number = itl
+            if d == 0
+                break
+            end
+        end
+    end
+    return co.λtip_map[number]
+end

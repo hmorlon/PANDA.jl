@@ -586,7 +586,7 @@ function convert_id(co::CladsOutput, id::String)
 		number_as_string=split(id,"_")[end]
 		number=parse(Int, number_as_string)
 		par_id = 4 + number
-	elseif occursin("lin",id)
+	elseif occursin("lin",id) | occursin("div",id)
 		number_as_string=split(id,"_")[end]
 		number=parse(Int, number_as_string)
 		par_id = 4 + n_edges + n_tips + number
