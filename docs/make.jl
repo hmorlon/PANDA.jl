@@ -5,6 +5,7 @@ makedocs(;
     format=Documenter.HTML(),
     pages=[
         "Home" => "index.md",
+        "ClaDS" => Any["Tutorial" => "clads/tutorial.md"]
     ],
     repo="https://github.com/hmorlon/PANDA.jl/blob/{commit}{path}#L{line}",
     sitename="PANDA.jl",
@@ -13,5 +14,5 @@ makedocs(;
 )
 
 deploydocs(;
-    repo="github.com/hmorlon/PANDA.jl",
+    repo="github.com/hmorlon/PANDA.jl.git",
 )
