@@ -10,7 +10,7 @@ using Random: randexp
 using Distributions: Bernoulli, LogNormal, Weights, sample, Normal, InverseGamma
 using RCall: @rput, @rget, reval
 using Statistics: mean, var
-
+using StringDistances: Levenshtein
 # other submodules dependencies
 using ..Utils
 
@@ -35,7 +35,7 @@ include("clads/rates.jl")
 include("clads/gibbs.jl")
 
 reval("""
-        list.of.packages <- c("ape", "coda")   
+        list.of.packages <- c("ape", "coda")
         new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
         if(length(new.packages)) install.packages(new.packages)
     """)

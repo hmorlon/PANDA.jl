@@ -402,7 +402,7 @@ function plot_RTT(co::CladsOutput ;nplot = 50, miny = -1, maxy = 1, alpha_col = 
 
 end
 
-function plot_density(co::CladsOutput, id_par::Int64, burn = 0.25)
+function plot_density(co::CladsOutput, id_par::Int64; burn = 0.25)
 	n_par = length(co.chains[1])
 	n_tips = n_extant_tips(co.tree)
 	n_edges = (n_tips - 1)*2
@@ -437,7 +437,6 @@ function plot_density(co::CladsOutput, id_par::Int64, burn = 0.25)
 				name = "lambda_tip $tip_name"
 			end
 			map = co.λtip_map[i]
-			println(map)
 		else
 			i = id_par - (6 + n_edges + n_tips)
 			name = "number of lineages (time $(co.time_points[i]))"
@@ -476,7 +475,7 @@ function plot_density(co::CladsOutput, id_par::Int64, burn = 0.25)
 	""")
 end
 
-function plot_chain(co::CladsOutput, id_par::Int64, burn = 0.25)
+function plot_chain(co::CladsOutput, id_par::Int64; burn = 0.25)
 	n_par = length(co.chains[1])
 	n_tips = n_extant_tips(co.tree)
 	n_edges = (n_tips - 1)*2
@@ -511,7 +510,6 @@ function plot_chain(co::CladsOutput, id_par::Int64, burn = 0.25)
 				name = "lambda_tip $tip_name"
 			end
 			map = co.λtip_map[i]
-			println(map)
 		else
 			i = id_par - (6 + n_edges + n_tips)
 			name = "number of lineages (time $(co.time_points[i]))"
@@ -541,4 +539,62 @@ function plot_chain(co::CladsOutput, id_par::Int64, burn = 0.25)
 		traceplot(mcmc.list(lapply(chain, mcmc)), ylab = name)
 
 	""")
+end
+
+function convert_id(co::CladsOutput, id::String)
+	n_par = length(co.chains[1])
+	n_tips = n_extant_tips(co.tree)
+	n_edges = (n_tips - 1)*2
+
+	if occursin("σ",id) | occursin("sig",id)
+		par_id = 1
+	elseif occursin("α",id) | occursin("al",id)
+		par_id = 2
+	elseif occursin("ε",id) | occursin("ϵ",id) | occursin("eps",id) | occursin("turn",id)
+		par_id = 3
+	elseif occursin("λ0",id) | occursin("lambda0",id) | occursin("lambda_0",id) | occursin("lamb_0",id)
+		par_id = 4
+	elseif occursin(r"λ*tip",id) | occursin(r"lamb*tip",id)
+		number = 0
+		tip_id=split(id,"tip_")[end]
+		re = r"^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)$";
+		if occursin(re, tip_id)
+			number=parse(Int, tip_id)
+		else
+			dist = Inf
+			tip_labs = tip_labels(co.tree)
+			for itl in 1:length(tip_labs)
+				d = Levenshtein()(tip_id, tip_labs[itl])
+				if d < dist
+					dist = d
+					number = itl
+					if d == 0
+						break
+					end
+				end
+			end
+		end
+		par_id = 4 + n_edges + number
+	elseif occursin("λ",id) | occursin("lamb",id)
+		number_as_string=split(id,"_")[end]
+		number=parse(Int, number_as_string)
+		par_id = 4 + number
+	elseif occursin("lin",id)
+		number_as_string=split(id,"_")[end]
+		number=parse(Int, number_as_string)
+		par_id = 4 + n_edges + n_tips + number
+	elseif occursin("rat",id)
+		number_as_string=split(id,"_")[end]
+		number=parse(Int, number_as_string)
+		par_id = n_par - 2 + number
+	else
+		par_id = 1
+	end
+
+	return par_id
+end
+
+function plot_density(co::CladsOutput, id_par::String; burn = 0.25)
+	id = convert_id(co, id_par)
+	plot_density(co, id, burn = burn)
 end
