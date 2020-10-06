@@ -161,7 +161,12 @@ function load_tree(file)
         reval("""
             require(ape)
             temp_tree = read.tree(file)
-            print(temp_tree)
+        """)
+    elseif file[(end-3):end] == ".nex"
+        @rput file
+        reval("""
+            require(ape)
+            temp_tree = read.nexus(file)
         """)
     end
     @rget temp_tree
