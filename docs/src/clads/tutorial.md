@@ -12,7 +12,7 @@ my_tree = load_tree(tree_path)
 
 ## Running ClaDS
 
-The parameter inference is ran with the function [`infer_ClaDS`](@ref)
+The parameter inference is ran with the function `infer_ClaDS`
 
 ```julia
 output = infer_ClaDS(my_tree)
@@ -54,6 +54,12 @@ The result is a `CladsOutput` object, that contains the following fields:
 - `enhanced_tree`: Sample from the complete phylogeny distribution. Their number can be specified through the keyword argument `n_trees`.
 - `gelm`: Evaluation of the gelman statistics.
 
+If the tree has tip labels, the tip rate for species `sp_name` can be extracted using the function `tip_rate`:
+
+```julia
+tip_rate(output, sp_name)
+```
+
 ### Plot the branch specific rates
 
 It can be plotted using the `plot_CladsOutput` function. By default, this function plots the reconstructed phylogeny painted with the inferred branch-specific speciation rates, but other methods are available.
@@ -90,3 +96,46 @@ Similarly to the diversity through time plot, we have here:
 - dotted green line: the point estimates
 
 ### Marginal posterior densities
+
+With the keyword argument `method = "density"`, the functions plot the marginal posterior density of a given model parameter or a summary statistics. Similarly, `method = "chain"` allows plotting the mcmc chains for this parameter.
+
+```julia
+plot_CladsOutput(output, method = "density")
+plot_CladsOutput(output, method = "chain")
+```
+
+What parameter to plot is specified through the keyword `id_par`, for both  `method = "density"` and  `method = "chain"`.
+
+```julia
+plot_CladsOutput(output, method = "density", id_par = "sigma")
+plot_CladsOutput(output, method = "density", id_par = "σ")
+
+plot_CladsOutput(output, method = "density", id_par = "alpha")
+plot_CladsOutput(output, method = "density", id_par = "epsilon")
+plot_CladsOutput(output, method = "density", id_par = "lambda0")
+```
+
+The branch specific speciation rate of branch `i` is accessed with  `id_par = lambda_i` or `id_par = λ_i`
+
+```julia
+plot_CladsOutput(output, method = "density", id_par = "lambda_5")
+plot_CladsOutput(output, method = "density", id_par = "λ_2")
+```
+
+The tip rate of tip `i` is accessed with  `id_par = lambda_tip_i` or `id_par = λtip_i`. Alternatively, if the tree has tip labels, the rate can be accessed using the species name with `id_par = lambda_tip_spname`.
+
+```julia
+plot_CladsOutput(output, method = "density", id_par = "lambdatip_2")
+plot_CladsOutput(output, method = "density", id_par = "λtip_3")
+
+sp_name = tip_labels(my_tree)[10]
+id_par = "λtip_$(sp_name)"
+plot_CladsOutput(output, method = "density", id_par = id_par)
+```
+
+Finaly, the rate through time and diversity through time can be accessed with `id_par = rate_time` and `id_par = div_time`, where `time` is an integer between `1`and `length(output.time_points)`.
+
+```julia
+plot_CladsOutput(output, method = "density", id_par = "rate_12")
+plot_CladsOutput(output, method = "density", id_par = "div_33")
+```

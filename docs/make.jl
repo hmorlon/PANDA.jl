@@ -5,9 +5,7 @@ makedocs(;
     format=Documenter.HTML(),
     pages=[
         "Home" => "index.md",
-        "ClaDS" => Any["Tutorial" => "clads/tutorial.md",
-            "Simulation" => "clads/sim_clads.md",
-            "Inference" => "clads/infer_clads.md"]
+        "ClaDS" => Any["Tutorial" => "clads/tutorial.md"]
     ],
     repo="https://github.com/hmorlon/PANDA.jl/blob/{commit}{path}#L{line}",
     sitename="PANDA.jl",
