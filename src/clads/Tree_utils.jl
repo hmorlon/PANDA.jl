@@ -13,6 +13,10 @@ function tip_labels(tree::Tree)
     return x
 end
 
+function n_tips(tree::Tree)
+    return Int64((tree.n_nodes + 1)/2)
+end
+
 function tips(tree::Tree)
     function aux(subtree, x)
         if length(subtree.offsprings) == 0
