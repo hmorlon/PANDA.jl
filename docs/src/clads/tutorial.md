@@ -18,6 +18,20 @@ The parameter inference is ran with the function `infer_ClaDS`
 output = infer_ClaDS(my_tree)
 ```
 
+You can save the result with
+
+```julia
+using JLD2
+@save the_path_you_want_to_save_the_result output
+```
+
+and load it back to a julia session with
+
+```julia
+using JLD2
+@load the_path_you_want_to_save_the_result output
+```
+
 ### Incomplete sampling
 
 By default, the function considers that the clade was perfectly sampled, i.e. that all the species alive at present time are included in the phylogeny. If it is not the case, the sampling fraction can be specified through the keyword argument `f`. `f` can be a `Float`, in which case the sampling fraction is taken as homogeneous on the whole phylogeny.
