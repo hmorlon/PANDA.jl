@@ -105,6 +105,6 @@ function save_ClaDS_in_R(co::CladsOutput, path::String ; maxit = Inf, burn = 0.2
             gelm = c(gelm_id, gelm_stat)
         )
 
-        save(CladsOutput, path)
+        save(CladsOutput, file = path)
     """)
 end
