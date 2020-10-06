@@ -1,35 +1,3 @@
-function make_ape(tree::Tree ; id = 1)
-    n_nodes = tree.n_nodes
-    node_id = (n_nodes + 3)/2
-
-    function aux(subtree, root, next_node, tip)
-        if subtree.n_nodes == 0
-            return Array{Int64,2}(undef,0,2), Array{Float64,1}(undef,0), Array{Float64,1}(undef,0), next_node, tip, Array{String,1}(undef,0)
-        elseif length(subtree.offsprings) == 0
-            return [root tip], subtree.branch_length, subtree.attributes[id], next_node, tip+1, subtree.label
-        else
-            tupple1 = aux(subtree.offsprings[1], next_node, next_node+1, tip)
-            tupple2 = aux(subtree.offsprings[2], next_node, tupple1[4], tupple1[5])
-            if subtree.branch_length == 0.
-                return [tupple1[1]; tupple2[1]],
-                    [tupple1[2]; tupple2[2]],
-                    [tupple1[3]; tupple2[3]],
-                    tupple2[4], tupple2[5],
-                    [tupple1[6]; tupple2[6]]
-            else
-                return [[root next_node]; tupple1[1]; tupple2[1]],      # edges
-                    [subtree.branch_length; tupple1[2]; tupple2[2]],    # branch lengths
-                    [subtree.attributes[id]; tupple1[3]; tupple2[3]],   # rates
-                    tupple2[4], tupple2[5],                             # auxiliary variables
-                    [tupple1[6]; tupple2[6]]                            # tip labels
-            end
-        end
-    end
-
-    tupple = aux(tree, -1, node_id, 1)
-    return tupple[1], tupple[2], tupple[3], tupple[6]
-end
-
 function R_tree(tree::Tree ; file = "tree.Rdata")
     edges, branch_lengths, temp_rates, tip_labels = make_ape(tree)
     ntip = (tree.n_nodes + 1)/2

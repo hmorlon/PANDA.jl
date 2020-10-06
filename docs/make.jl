@@ -7,7 +7,7 @@ makedocs(;
         "Home" => "index.md",
         "ClaDS" => Any["Tutorial" => "clads/tutorial.md",
             "Simulation" => "clads/sim_clads.md",
-            "Inferrence" => "clads/infer_clads.md"]
+            "Inference" => "clads/infer_clads.md"]
     ],
     repo="https://github.com/hmorlon/PANDA.jl/blob/{commit}{path}#L{line}",
     sitename="PANDA.jl",
@@ -16,5 +16,5 @@ makedocs(;
 )
 
 deploydocs(;
-    repo="github.com/hmorlon/PANDA.jl",
+    repo="github.com/hmorlon/PANDA.jl.git",
 )

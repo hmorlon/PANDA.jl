@@ -3,15 +3,23 @@ Simulate a ClaDS2 tree conditionned on tip number
 =#
 
 """
-    sim_ClaDS2_ntips(n,σ,α,ε,λ0 ; return_if_extinct = false,
-        make_tree = true, prune_extinct = true, tree_only = true, sed = 0.001,
-        max_time = 5, sc=true, max_simulation_try = 100)
+    sim_ClaDS2_ntips(n::Int64,σ::Float64,α::Float64,ε::Float64,λ0::Float64 ; ...)
 
 Simulate a tree from the ClaDS model conditionned on the number of tips at present
+
+# Arguments
+- `n::Int64`: the goal number of tips at present.
+- `σ::Float64`: the stochasticity parameter.
+- `α::Float64`: the trend parameter.
+- `ε::Float64`: turnover rate (extinction / speciation).
+- `λ0::Float64`: initial speciation rate.
+
+# Keyword arguments
+- `prune_extinct::Bool`: Should extinct lineages be removed from the output tree? Default to false.
 """
-function sim_ClaDS2_ntips(n,σ,α,ε,λ0 ; return_if_extinct = false,
-    make_tree = true, prune_extinct = true, tree_only = true, sed = 0.001,
-    max_time = 5, sc=true, max_simulation_try = 100)
+function sim_ClaDS2_ntips(n::Int64,σ::Float64,α::Float64,ε::Float64,λ0::Float64 ;
+    prune_extinct = true, sed = 0.001,
+    max_time = 5, max_simulation_try = 100)
 
     # accesory functions that will be called latter
 
@@ -68,17 +76,9 @@ function sim_ClaDS2_ntips(n,σ,α,ε,λ0 ; return_if_extinct = false,
                         branch_lengths[i] += time_int
                     end
 
-                    if make_tree
-                        t = build_tree(branches, branch_lengths, rates, extinct = dead_branches, prune_extinct = prune_extinct, root_attributes=[λ0])
-                        if tree_only
-                            return t
-                        else
-                            return t, times, n_lineages, time_diffs
-                        end
-                    else
-                        return branches, branch_lengths, rates, dead_branches, times, n_lineages
-                    end
-                elseif sc
+                    t = build_tree(branches, branch_lengths, rates, extinct = dead_branches, prune_extinct = prune_extinct, root_attributes=[λ0])
+                    return t
+                else
                     scale /= (1. - samp)                # so that sampling is uniform on all time points wit n species
                 end
             else

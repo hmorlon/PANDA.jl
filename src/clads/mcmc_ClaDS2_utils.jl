@@ -34,7 +34,7 @@ function add_to_chain!(chain, param)
     end
 end
 
-function initialize_ClaDS2(tree::Tree ; ini_par = [], initialize_rates = 0, ltt_steps = 10, enhance_method = "reject", n_chains = 3, n_trees = 10) where {N}
+function initialize_ClaDS2(tree::Tree ; ini_par = [], initialize_rates = 0, ltt_steps = 10, n_chains = 3, n_trees = 10) where {N}
 
     new_tree = Tree(deepcopy(tree.offsprings), 0., deepcopy(tree.attributes))
 
@@ -77,8 +77,8 @@ function initialize_ClaDS2(tree::Tree ; ini_par = [], initialize_rates = 0, ltt_
     return chains, param, edge_trees_s, trees, extant_branch_lengths, ltt_times, live_nd, mean_rates_chains, Array{Tree,1}(undef,0)
 end
 
-function add_iter_ClaDS2(sampler, n_reccord::Int64; thin = 1, fs = 1., plot_tree = 0, print_state = 0, quad = 1,
-    max_node_number = 1_000, max_try = 100_000, it_edge_tree = 1, print_all = false, it_rates = 1, enhance_method = "reject", n_trees = 10)
+function add_iter_ClaDS2(sampler, n_reccord::Int64; thin = 1, fs = 1., plot_tree = 0, print_state = 0,
+    max_node_number = 1_000, max_try = 100_000, it_edge_tree = 1, print_all = false, it_rates = 1, n_trees = 10)
 
     chain_s, param_s, edge_trees_s, tree_s, extant_branch_lengths, ltt_times, live_nd, mean_rates_chains, enhanced_trees = sampler
 
@@ -109,7 +109,7 @@ function add_iter_ClaDS2(sampler, n_reccord::Int64; thin = 1, fs = 1., plot_tree
         for i in 1:n_reccord
             for j in 1:thin
                 for l in 1:it_edge_tree
-                    update_edge_trees!(edge_trees, tree, σ, α, ε, fs, rates, extant_branch_lengths, enhance_method= enhance_method,
+                    update_edge_trees!(edge_trees, tree, σ, α, ε, fs, rates, extant_branch_lengths,
                         max_node_number = max_node_number, max_try = max_try, keep_if_any = true,
                         do_tips =  true)
 

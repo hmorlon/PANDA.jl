@@ -1,15 +1,24 @@
 """
-    infer_ClaDS(tree::Tree, n_reccord::Int64; ini_par = [], initialize_rates = 0, goal_gelman = 1.05,
-        thin = 1, burn = 1/4, f = 1., plot_tree = 0, print_state = 0, max_node_number = 100, plot_chain = false,quad = 1,
-        max_try = 10_000, it_edge_tree = 30, print_all = false, it_rates = 3, former_run = CladsOutput(), plot_burn = NaN, ltt_steps = 50,
-        save_as_R = false, Rfile = "coda.Rdata", max_it_number = Inf, enhance_method = "MHrr", end_it = Inf, n_chains = 3, n_trees = 10)
+    infer_ClaDS(tree::Tree, n_reccord::Int64; ...)
 
 Infer ClaDS parameters on a tree
+
+# Arguments
+- `tree::Tree`: the phylogeny on which to perform the inference.
+- `n_reccord::Int64`: number of iterations between two computations of the gelman statistics. Default to `1_000`.
+
+# Keyword arguments
+- `former_run::CladsOutput`: the result of a run of `infer_ClaDS` on the tree. The new mcmc chains will be added to these ones.
+- `f::Float64`: The sampling probability. Default to `1.`.
+- `thin::Int64`: The thinning parameter. Default to `1.`.
+- `burn::Float64`: The proportion of the mcmc that will be discarded befor computing the gelman statistics and point estiamtes for the parameters. Default to `0.25`.
+- `n_trees::Int64`: Number of samples from the posterior distribution of complete phylogenies to be outputed. Default to `10`.
+- `goal_gelman::Float64`: . Default to `1.05`.
 """
-function infer_ClaDS(tree::Tree, n_reccord::Int64; ini_par = [], initialize_rates = 0, goal_gelman = 1.05,
-    thin = 1, burn = 1/4, f = 1., plot_tree = 0, print_state = 0, max_node_number = 100, plot_chain = false,quad = 1,
+function infer_ClaDS(tree::Tree, n_reccord=1000::Int64; ini_par = [], initialize_rates = 0, goal_gelman = 1.05,
+    thin = 1, burn = 1/4, f = 1., plot_tree = 0, print_state = 0, max_node_number = 100, plot_chain = false,
     max_try = 10_000, it_edge_tree = 30, print_all = false, it_rates = 3, former_run = CladsOutput(), plot_burn = NaN, ltt_steps = 50,
-    save_as_R = false, Rfile = "coda.Rdata", max_it_number = Inf, enhance_method = "MHrr", end_it = Inf, n_chains = 3, n_trees = 10)
+    max_it_number = Inf, end_it = Inf, n_chains = 3, n_trees = 10)
 
     ntips = Int64((tree.n_nodes + 1)/2)
     if isnan(plot_burn)
@@ -17,7 +26,7 @@ function infer_ClaDS(tree::Tree, n_reccord::Int64; ini_par = [], initialize_rate
     end
 
     if length(former_run.chains) == 0
-        sampler = initialize_ClaDS2(tree , ini_par = ini_par, initialize_rates = initialize_rates, ltt_steps = ltt_steps, enhance_method = enhance_method, n_chains = n_chains, n_trees = n_trees)
+        sampler = initialize_ClaDS2(tree , ini_par = ini_par, initialize_rates = initialize_rates, ltt_steps = ltt_steps, n_chains = n_chains, n_trees = n_trees)
     else
         sampler = (former_run.chains,
             former_run.current_state[1],
@@ -48,7 +57,7 @@ function infer_ClaDS(tree::Tree, n_reccord::Int64; ini_par = [], initialize_rate
 
         sampler = add_iter_ClaDS2(sampler, n_reccord, thin = thin, fs = fs, plot_tree = plot_tree, print_state = print_state,
             max_node_number = max_node_number, max_try = max_try, it_edge_tree = it_edge_tree,
-            print_all = print_all, it_rates = it_rates, enhance_method = enhance_method, quad = quad, n_trees = n_trees)
+            print_all = print_all, it_rates = it_rates, n_trees = n_trees)
 
         nit += n_reccord
 
@@ -118,10 +127,6 @@ function infer_ClaDS(tree::Tree, n_reccord::Int64; ini_par = [], initialize_rate
             #MAPS[2] = exp(MAPS[2])
         """)
         @rget MAPS
-        if save_as_R
-            chains = sampler[1]
-            sampler_to_Rdata(tree, (sampler, MAPS), Rfile , sample_fraction = f, max_it_number = max_it_number)
-        end
         println("iteration $(length(sampler[1][1][1])) ; gelman = $gelman for param $id_gelman")
         println("   σ = $(MAPS[1]), α = $(MAPS[2]), ε = $(MAPS[3]), λ0 = $(MAPS[4])")
         println("")

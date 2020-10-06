@@ -1,5 +1,5 @@
 function update_edge_trees!(edge_trees, tree, σ, α, ε, fs, rates_all, branch_lengths_all ; do_tips = true, max_try = 1_000,
-    max_node_number = 50, keep_if_any = true, enhance_method = "reject", rep = 1)
+    max_node_number = 50, keep_if_any = true, rep = 1)
     n_edges = length(edge_trees)
     branch_lengths = branch_lengths_all[2:end]
     left = n_left(tree)
@@ -11,17 +11,15 @@ function update_edge_trees!(edge_trees, tree, σ, α, ε, fs, rates_all, branch_
             max_try = max_try, max_node_number = max_node_number, rep = rep);
     end
 
-    if (enhance_method == "MHrr" || enhance_method == "MHrr_old")
-        update_rates!(tree,rates_all)
-    end
+    update_rates!(tree,rates_all)
 end
 
-function update_edge_trees!(edge_trees, tree, σ, α, ε, fs; max_try = 1_000, max_node_number = 50, keep_if_any = true, do_tips = true, enhance_method = "reject")
+function update_edge_trees!(edge_trees, tree, σ, α, ε, fs; max_try = 1_000, max_node_number = 50, keep_if_any = true, do_tips = true)
     rates_all = extract_rates(tree)
     branch_lengths_all = extract_branch_lengths(tree)
 
     update_edge_trees!(edge_trees, tree, σ, α, ε, fs, rates_all, branch_lengths_all, max_try = max_try,
-        max_node_number = max_node_number, keep_if_any = keep_if_any, do_tips = do_tips, enhance_method = enhance_method)
+        max_node_number = max_node_number, keep_if_any = keep_if_any, do_tips = do_tips)
 end
 
 function change_edge_trees_rrMH!(edge_trees, tree, edge_id, σ, α, ε, f, rates, branch_lengths, lefts;
