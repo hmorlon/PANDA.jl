@@ -2,6 +2,13 @@
 Simulate a ClaDS2 tree conditionned on tip number
 =#
 
+"""
+    sim_ClaDS2_ntips(n,σ,α,ε,λ0 ; return_if_extinct = false,
+        make_tree = true, prune_extinct = true, tree_only = true, sed = 0.001,
+        max_time = 5, sc=true, max_simulation_try = 100)
+
+Simulate a tree from the ClaDS model conditionned on the number of tips at present
+"""
 function sim_ClaDS2_ntips(n,σ,α,ε,λ0 ; return_if_extinct = false,
     make_tree = true, prune_extinct = true, tree_only = true, sed = 0.001,
     max_time = 5, sc=true, max_simulation_try = 100)

@@ -36,8 +36,10 @@ using .TRIBE: tribe, simulate_tribe
 export tribe, simulate_tribe
 
 using .ClaDS: Tree, sim_ClaDS2_ntips, plot_ClaDS, infer_ClaDS,
-    CladsOutput, print_CladsOutput, plot_CladsOutput, load_tree
+    CladsOutput, print_CladsOutput, plot_CladsOutput, load_tree,
+    save_ClaDS_in_R
 export Tree, sim_ClaDS2_ntips, plot_ClaDS, infer_ClaDS,
-    CladsOutput, print_CladsOutput, plot_CladsOutput, load_tree
+    CladsOutput, print_CladsOutput, plot_CladsOutput, load_tree,
+    save_ClaDS_in_R
 
 end

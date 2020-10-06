@@ -1,3 +1,11 @@
+"""
+    infer_ClaDS(tree::Tree, n_reccord::Int64; ini_par = [], initialize_rates = 0, goal_gelman = 1.05,
+        thin = 1, burn = 1/4, f = 1., plot_tree = 0, print_state = 0, max_node_number = 100, plot_chain = false,quad = 1,
+        max_try = 10_000, it_edge_tree = 30, print_all = false, it_rates = 3, former_run = CladsOutput(), plot_burn = NaN, ltt_steps = 50,
+        save_as_R = false, Rfile = "coda.Rdata", max_it_number = Inf, enhance_method = "MHrr", end_it = Inf, n_chains = 3, n_trees = 10)
+
+Infer ClaDS parameters on a tree
+"""
 function infer_ClaDS(tree::Tree, n_reccord::Int64; ini_par = [], initialize_rates = 0, goal_gelman = 1.05,
     thin = 1, burn = 1/4, f = 1., plot_tree = 0, print_state = 0, max_node_number = 100, plot_chain = false,quad = 1,
     max_try = 10_000, it_edge_tree = 30, print_all = false, it_rates = 3, former_run = CladsOutput(), plot_burn = NaN, ltt_steps = 50,

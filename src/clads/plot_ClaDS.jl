@@ -408,6 +408,8 @@ function plot_density(co::CladsOutput, id_par::Int64; burn = 0.25)
 	n_edges = (n_tips - 1)*2
 	nit = length(co.chains[1][1])
 	init = Int64(ceil(burn * nit))
+	color = "orange"
+
 	if id_par >= 5 + n_edges + n_tips
 		id_par += 2
 	end
@@ -438,6 +440,7 @@ function plot_density(co::CladsOutput, id_par::Int64; burn = 0.25)
 			end
 			map = co.λtip_map[i]
 		else
+			color = "#3498db"
 			i = id_par - (6 + n_edges + n_tips)
 			name = "number of lineages (time $(co.time_points[i]))"
 			map = co.DTT_mean[i]
@@ -457,7 +460,7 @@ function plot_density(co::CladsOutput, id_par::Int64; burn = 0.25)
 	@rput map
 	@rput id_par
 	@rput n_par
-
+	@rput color
 	reval("""
 		if (id_par < 5 ){
 			d = density(chain)
@@ -466,7 +469,7 @@ function plot_density(co::CladsOutput, id_par::Int64; burn = 0.25)
 			d = density(log(chain))
 			plot(exp(d\$x), d\$y, type = 'l', lwd = 3, xlab = name, ylab = "density", log = 'x')
 		}
-		abline(v = map, lwd = 3, col = "orange")
+		abline(v = map, lwd = 3, col = color)
 
 		color_q = adjustcolor("coral3", alpha.f = 0.1)
 		quant = quantile(chain, c(0.025,0.975))
@@ -597,4 +600,9 @@ end
 function plot_density(co::CladsOutput, id_par::String; burn = 0.25)
 	id = convert_id(co, id_par)
 	plot_density(co, id, burn = burn)
+end
+
+function plot_chain(co::CladsOutput, id_par::String; burn = 0.25)
+	id = convert_id(co, id_par)
+	plot_chain(co, id, burn = burn)
 end

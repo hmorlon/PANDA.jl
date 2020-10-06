@@ -33,6 +33,7 @@ include("clads/RTT.jl")
 include("clads/enhance_tree.jl")
 include("clads/rates.jl")
 include("clads/gibbs.jl")
+include("clads/export_in_R.jl")
 
 reval("""
         list.of.packages <- c("ape", "coda")
