@@ -318,7 +318,7 @@ function plot_DTT(co::CladsOutput; nyl = 1000, n_ltt = 100, alpha_col = 0.05, bu
                 lines(ltt_times, y, col = alpha("deepskyblue2", alpha = alpha_col), lwd = 2)
                 }
             }
-        quant = sapply(1:ncol(Ys), function(i){quantile(Ys[,i], probs = c(0.05,0.95))})
+		quant = sapply(1:ncol(Ys), function(i){quantile(log(unlist_chains[,i]), probs = c(0.05,0.95))})
 
         lines(ltt_times, quant[1,], col = "deepskyblue3", lwd = 2)
         lines(ltt_times, quant[2,], col = "deepskyblue3", lwd = 2)
@@ -341,7 +341,8 @@ function plot_RTT(co::CladsOutput ;nplot = 50, miny = -1, maxy = 1, alpha_col = 
 	RTT_map = co.RTT_map
     N = length(co.rtt_chains[1])
     t = times#[1:length(tr)]
-    plot_id = Array{Int64,1}(floor.(range(2+ floor(burn * N), length=nplot, stop=N)))
+	ini_plot = Int64(2+ floor(burn * N))
+    plot_id = Array{Int64,1}(floor.(range(ini_plot, length=nplot, stop=N)))
     mean_mr = zeros(length(times))
     a = Array{Float64,1}(undef,0)
     map_mr = [deepcopy(a) for i in 1:length(times)]
@@ -369,13 +370,15 @@ function plot_RTT(co::CladsOutput ;nplot = 50, miny = -1, maxy = 1, alpha_col = 
     for i in 1:3
         color = colors[i]
         @rput color
-        for k in plot_id
+        for k in ini_plot:N
             y = co.rtt_chains[i][k]
             for j in 1:length(y)
                 push!(map_mr[j],log(y[j]))
             end
-            @rput y
-            reval("""lines(t, log(y), col = alpha(color, alpha = alpha_col), lwd = 2)""")
+			if k ∈ plot_id
+            	@rput y
+            	reval("""lines(t, log(y), col = alpha(color, alpha = alpha_col), lwd = 2)""")
+			end
             mean_mr .+= y
             n += 1
         end
@@ -386,6 +389,7 @@ function plot_RTT(co::CladsOutput ;nplot = 50, miny = -1, maxy = 1, alpha_col = 
     @rput map_mr
     reval("""
         maps = log(RTT_map) #sapply(map_mr, function(x){D=density(x); return(D[[1]][which.max(D[[2]])])})
+		#quant = sapply(map_mr, function(x){quantile(x, probs = c(0.05,0.95))})
 		quant = sapply(map_mr, function(x){quantile(x, probs = c(0.05,0.95))})
 
     """)
