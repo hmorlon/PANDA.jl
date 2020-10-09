@@ -3,8 +3,6 @@
 ```@index
 ```
 
-# Documentation
-
 ```@meta
 CurrentModule = PANDA
 using PANDA

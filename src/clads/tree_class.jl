@@ -2,6 +2,16 @@
 The tree structure used for all the ClaDS functions
 =#
 
+"""
+A phylogeny object for the module ClaDS. It is represented as a branch with a given length and optional attributes, and its daughter trees.
+
+- `offsprings::Array{Tree,1}`: the two daughter trees.
+- `branch_length::Float64`: the length of the branch
+- `attributes::Array{T,1} where {T<:Number}`: soem attributes of the branch. Used to store the speciation rates.
+- `n_nodes::Int64`: the number of nodes in the tree (internal nodes + tips)
+- `extant::Bool`: does the tree have any extant species?
+- `label::String`: if the tree is a tip (ie n_nodes == 1), contains the name of the corresponding species.
+"""
 struct Tree
     offsprings::Array{Tree,1}
     branch_length::Float64

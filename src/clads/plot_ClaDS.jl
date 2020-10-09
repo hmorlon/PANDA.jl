@@ -8,7 +8,7 @@ function create_plot_ClaDS_ape()
     require(ape)
     require(RColorBrewer)
 
-    plot_ClaDS=function(phylo,rate1,rate2=NULL,same.scale=T,main=NULL,lwd=1,log=T, show_labels=F, minr = Inf, maxr = 0, show_legend = T,...){
+    plot_ClaDS=function(phylo,rate1,rate2=NULL,same.scale=T,main=NULL,lwd=3,log=T, show_labels=F, minr = Inf, maxr = 0, show_legend = T,...){
         Colors = colorRampPalette(rev(c('darkred',brewer.pal(n = 8, name = "Spectral"),'darkblue')))(100)
 
      if(nrow(phylo[[1]]) <=1){
@@ -159,7 +159,7 @@ Plot a tree with branch rates from Julia
 =#
 
 # specifying only the tree, .attribute[id] used as rates
-function plot_ClaDS(tree::Tree ; id = 1, ln=true, lwd=3, show_labels = false, options="")
+function plot_ClaDS(tree::Tree ; id = 1, ln=true, show_labels = false, options="")
     plot_tree = Tree(tree.offsprings, 0., tree.attributes, tree.n_nodes)
 
     opt = options
@@ -176,7 +176,6 @@ function plot_ClaDS(tree::Tree ; id = 1, ln=true, lwd=3, show_labels = false, op
     @rput rates
     @rput ntip
     @rput ln
-    @rput lwd
     @rput show_labels
     @rput tip_labels
 
@@ -184,12 +183,12 @@ function plot_ClaDS(tree::Tree ; id = 1, ln=true, lwd=3, show_labels = false, op
     reval("""
         tree = list(edge = edges, Nnode = ntip - 1, edge.lengths = branch_lengths, tip.labels = tip_labels)
         class(tree) = "phylo"
-        colors = plot_ClaDS(tree, rates, log=ln, lwd=lwd, show_labels = show_labels $opt);
+        colors = plot_ClaDS(tree, rates, log=ln, show_labels = show_labels $opt);
     """)
 end
 
 # specifying the tree and a vector of rates
-function plot_ClaDS(tree::Tree, rates ; id = 1, ln=true, lwd=3, round = false, options = "", show_labels=false)
+function plot_ClaDS(tree::Tree, rates ; id = 1, ln=true, round = false, options = "", show_labels=false)
     plot_tree = Tree(tree.offsprings, 0., tree.attributes, tree.n_nodes)
 
     opt = options
@@ -206,7 +205,6 @@ function plot_ClaDS(tree::Tree, rates ; id = 1, ln=true, lwd=3, round = false, o
     @rput rates
     @rput ntip
     @rput ln
-    @rput lwd
     @rput show_labels
     @rput tip_labels
 
@@ -214,12 +212,12 @@ function plot_ClaDS(tree::Tree, rates ; id = 1, ln=true, lwd=3, round = false, o
     reval("""
         tree = list(edge = edges, Nnode = ntip - 1, edge.lengths = branch_lengths, tip.labels = tip_labels)
         class(tree) = "phylo"
-        plot_ClaDS(tree, rates, log=ln, lwd=lwd, show_labels = show_labels $opt)
+        plot_ClaDS(tree, rates, log=ln, show_labels = show_labels $opt)
     """)
 end
 
 # specifying the tree and two vectors of rates, both kind of rates are plotted on the same color scale
-function plot_ClaDS(tree::Tree, rates1, rates2 ; id = 1, ln=true, lwd=3)
+function plot_ClaDS(tree::Tree, rates1, rates2 ; id = 1, ln=true)
     plot_tree = Tree(tree.offsprings, 0., tree.attributes, tree.n_nodes)
 
     reval("""
@@ -234,13 +232,12 @@ function plot_ClaDS(tree::Tree, rates1, rates2 ; id = 1, ln=true, lwd=3)
     @rput rates2
     @rput ntip
     @rput ln
-    @rput lwd
 
     reval("""
         tree = list(edge = edges, Nnode = ntip - 1, edge.lengths = branch_lengths, tip.labels = 1:ntip)
         class(tree) = "phylo"
-        leg = plot_ClaDS_noLeg(tree, rates1, rates2, log=ln, lwd=lwd)
-        leg = plot_ClaDS_noLeg(tree, rates2, rates1, log=ln, lwd=lwd)
+        leg = plot_ClaDS_noLeg(tree, rates1, rates2, log=ln $opt)
+        leg = plot_ClaDS_noLeg(tree, rates2, rates1, log=ln $opt)
         image.plot(z = leg[[1]],col = leg[[2]], horizontal=F,legend.only = T,axis.args=leg[[5]], legend.mar=4.5)
     """)
 end

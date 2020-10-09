@@ -29,7 +29,7 @@ function change_edge_trees_rrMH!(edge_trees, tree, edge_id, σ, α, ε, f, rates
     lambda_law = LogNormal(log_α,σ)                                                        # relative new rate density
 
     trial = 0
-    parent_rate = rates[edge_id+1]#get_parent_rate(tree, edge_id, edge_trees, rates)
+    parent_rate = get_parent_rate(tree, edge_id, edge_trees, rates)
     #pr2 = rates[1]
     #if edge_trees[edge_id].parent_edge > 0
     #    pr2 = edge_trees[edge_trees[edge_id].parent_edge].stem_rate[1] *edge_trees[edge_trees[edge_id].parent_edge].tip_rate             # the parent rate in the augmented tree
@@ -43,7 +43,7 @@ function change_edge_trees_rrMH!(edge_trees, tree, edge_id, σ, α, ε, f, rates
     if lefts[edge_id+1] == 0                                                                   # meaning it's a tip branch
 
         function new_rates_tip(l)                                                                   # new rate density
-            l #* rand(lambda_law, 1)[1]
+            l * rand(lambda_law, 1)[1]
         end
 
         int_tree = Tree()                                                                       # initialize the tree
@@ -96,7 +96,7 @@ function change_edge_trees_rrMH!(edge_trees, tree, edge_id, σ, α, ε, f, rates
         daughter_rates = [rates[edge_id+2]; rates[edge_id+2+lefts[edge_id+1]]]                  # the daugther rates in that case
         stem_rate = rates[edge_id+1]
         function new_rates_int(l)                                                                   # new rate density
-            l #* rand(lambda_law, 1)[1]
+            l * rand(lambda_law, 1)[1]
         end
 
         function nu(former_rate, former_ratio)                                                  # speciating at t_i and giving birth to the new  daugther rates
@@ -232,17 +232,6 @@ function change_edge_trees_rrMH!(edge_trees, tree, edge_id, σ, α, ε, f, rates
                                            add_to_tip_id += n_tip(tip_tree) - 1
                                        end
                                    end
-
-                                   #=if (keep && (tip_tree.n_nodes > 30))
-                                       ep = ε
-                                       nn = tip_tree.n_nodes
-                                       @rput ep
-                                       @rput nn
-                                       plot_ClaDS(tip_tree)
-                                       R"title(main = c(ep,nn))"
-                                       println("$nalive, $(var(extract_relative_rates(int_tree))) : $(σ^2) ; $(mean(extract_relative_rates(int_tree))) : $(log(α))
-                                        $(new_parent_rate * λ) , $daughter_rates, $(log(Ws) -former_lik)")
-                                  end=#
                               end
                          end
 

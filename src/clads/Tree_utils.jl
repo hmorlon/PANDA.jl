@@ -1,3 +1,11 @@
+"""
+    tip_labels(tree::Tree)
+
+Extract the tip labels of a tree.
+
+# Arguments
+- `tree::Tree`: a `Tree`object.
+"""
 function tip_labels(tree::Tree)
     function aux(subtree, x)
         if length(subtree.offsprings) == 0
@@ -13,6 +21,14 @@ function tip_labels(tree::Tree)
     return x
 end
 
+"""
+    n_tips(tree::Tree)
+
+Get the number of tip in a tree.
+
+# Arguments
+- `tree::Tree`: a `Tree`object.
+"""
 function n_tips(tree::Tree)
     return Int64((tree.n_nodes + 1)/2)
 end

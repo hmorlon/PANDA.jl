@@ -59,10 +59,7 @@ function initialize_ClaDS2(tree::Tree ; ini_par = [], initialize_rates = 0, ltt_
         σ = ini_par[i][1]
         α = ini_par[i][2]
         edge_trees = edge_trees_s[i]
-        for j in 1:initialize_rates
-            rates, ε, σ, α = update_edges_ini!(new_tree, edge_trees, σ, α, ε, rates, it_rates = 1, with_ε = false)
-            update_rates!(new_tree, rates)
-        end
+
         ini_par[i][4:(tree.n_nodes + 3)] = rates
         ini_par[i][3] = ε
         edge_trees_s[i] = edge_trees
@@ -78,7 +75,7 @@ function initialize_ClaDS2(tree::Tree ; ini_par = [], initialize_rates = 0, ltt_
 end
 
 function add_iter_ClaDS2(sampler, n_reccord::Int64; thin = 1, fs = 1., plot_tree = 0, print_state = 0,
-    max_node_number = 1_000, max_try = 100_000, it_edge_tree = 1, print_all = false, it_rates = 1, n_trees = 10)
+    max_node_number = 1_000, max_try = 100_000, it_edge_tree = 1, print_all = false, it_rates = 1, n_trees = 10, ini = false)
 
     chain_s, param_s, edge_trees_s, tree_s, extant_branch_lengths, ltt_times, live_nd, mean_rates_chains, enhanced_trees = sampler
 
@@ -119,6 +116,14 @@ function add_iter_ClaDS2(sampler, n_reccord::Int64; thin = 1, fs = 1., plot_tree
                     σ = draw_σ(relative_rates, α, β0 = 0.05, α0 = 0.5)
                     α = draw_α(relative_rates, σ,  α_0 = -0.05, σ_0 = 0.1)
                     ε = draw_ε_crown(tree, edge_trees, lefts)
+                    draw_λ0!(tree::Tree, ε::Float64, rates::Array{Float64,1},
+                        edge_trees::Array{EdgeTreeRates2,1})
+                    tree.attributes[1] = rates[1]
+                end
+
+                if ini
+                    print(".")
+                    draw_λ0_slicing!(rates, edge_trees, σ, α, ε, lefts)
                     draw_λ0!(tree::Tree, ε::Float64, rates::Array{Float64,1},
                         edge_trees::Array{EdgeTreeRates2,1})
                     tree.attributes[1] = rates[1]
@@ -287,4 +292,25 @@ function gelman_est(mcmc::Array{Array{Array{Float64,1},1},1}, Npar::Int64 ; thin
     end
 
     return id, sqrt(maxi)
+end
+
+
+function get_parent_rate(tree::Tree, edge_id::Int64, edge_trees::Array{EdgeTreeRates2,1})
+    parent_edge = edge_trees[edge_id].parent_edge
+
+    if parent_edge == 0
+        return tree.attributes[1]
+    else
+        return edge_trees[parent_edge].tip_rate * edge_trees[parent_edge].stem_rate[1]
+    end
+end
+
+function get_parent_rate(tree::Tree, edge_id::Int64, edge_trees::Array{EdgeTreeRates2,1}, rates::Array{Float64,1})
+    parent_edge = edge_trees[edge_id].parent_edge
+
+    if parent_edge == 0
+        return rates[1]
+    else
+        return edge_trees[parent_edge].tip_rate * rates[parent_edge+1]
+    end
 end

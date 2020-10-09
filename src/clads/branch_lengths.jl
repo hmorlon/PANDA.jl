@@ -1,4 +1,8 @@
+"""
+    extract_branch_lengths(tree::Tree)
 
+extract the branch lengths from a tree object, in the preorder order
+"""
 function extract_branch_lengths(tree::Tree)
     function aux(subtree, bl)
         if subtree.n_nodes == 0
@@ -17,7 +21,13 @@ function extract_branch_lengths(tree::Tree)
     return bl
 end
 
-function get_node_depth(tree, edge_id)
+
+"""
+    get_node_depth(tree::Tree, edge_id::Int64)
+
+extract the node depth from a tree object (distance to the present), in the preorder order
+"""
+function get_node_depth(tree::Tree, edge_id::Int64)
     function aux(subtree, edge)
         if subtree.n_nodes < 2
             return 0.

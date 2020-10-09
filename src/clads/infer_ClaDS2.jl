@@ -25,8 +25,21 @@ function infer_ClaDS(tree::Tree, n_reccord=1000::Int64; ini_par = [], initialize
         plot_burn = burn
     end
 
+
+    if length(f) == 1
+        fs = fill(f,tree.n_nodes-1)
+    elseif length(f) == ntips
+        fs = sample_fractions(tree,f)[2:end]
+    else
+        fs = f
+    end
     if length(former_run.chains) == 0
         sampler = initialize_ClaDS2(tree , ini_par = ini_par, initialize_rates = initialize_rates, ltt_steps = ltt_steps, n_chains = n_chains, n_trees = n_trees)
+        if initialize_rates > 0.
+            sampler = add_iter_ClaDS2(sampler, 1, thin = initialize_rates, fs = fs, plot_tree = plot_tree, print_state = 1,
+                max_node_number = max_node_number, max_try = max_try, it_edge_tree = 0.,
+                print_all = print_all, it_rates = 1, n_trees = n_trees, ini = true)
+        end
     else
         sampler = (former_run.chains,
             former_run.current_state[1],
@@ -41,13 +54,6 @@ function infer_ClaDS(tree::Tree, n_reccord=1000::Int64; ini_par = [], initialize
             former_run = CladsOutput()
     end
 
-    if length(f) == 1
-        fs = fill(f,tree.n_nodes-1)
-    elseif length(f) == ntips
-        fs = sample_fractions(tree,f)[2:end]
-    else
-        fs = f
-    end
 
     gelman = 10.
     MAPS=[]
