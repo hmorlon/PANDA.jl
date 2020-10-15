@@ -35,10 +35,4 @@ include("clads/rates.jl")
 include("clads/gibbs.jl")
 include("clads/export_in_R.jl")
 
-reval("""
-        list.of.packages <- c("ape", "coda")
-        new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
-        if(length(new.packages)) install.packages(new.packages)
-    """)
-
 end # module ClaDS
