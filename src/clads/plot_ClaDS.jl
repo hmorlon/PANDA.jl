@@ -391,7 +391,7 @@ function plot_RTT(co::CladsOutput ;nplot = 50, miny = -1, maxy = 1, alpha_col = 
 
     """)
     reval("""
-
+		lwd = 2
         lines(t, quant[1,], col = "deepskyblue3", lwd = 2)
         lines(t, quant[2,], col = "deepskyblue3", lwd = 2)
         lines(t, maps, col = "darkseagreen1", lwd = 5, lty = 1)
