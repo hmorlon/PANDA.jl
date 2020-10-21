@@ -144,6 +144,7 @@ uuid = "8bb1440f-4735-579b-a4ab-409b98df4dab"
 [[DiffEqBase]]
 deps = ["ArrayInterface", "ChainRulesCore", "ConsoleProgressMonitor", "DataStructures", "Distributed", "DocStringExtensions", "FunctionWrappers", "IterativeSolvers", "IteratorInterfaceExtensions", "LabelledArrays", "LinearAlgebra", "Logging", "LoggingExtras", "MuladdMacro", "Parameters", "Printf", "ProgressLogging", "RecipesBase", "RecursiveArrayTools", "RecursiveFactorization", "Requires", "Roots", "SparseArrays", "StaticArrays", "Statistics", "SuiteSparse", "TableTraits", "TerminalLoggers", "TreeViews", "ZygoteRules"]
 git-tree-sha1 = "7b598263d420cf7857497ed73236bd2e07597df7"
+uuid = "2b5f629d-d688-5b77-993f-72d75c75574e"
 version = "6.30.0"
 
 [[DiffEqCallbacks]]
