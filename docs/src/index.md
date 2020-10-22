@@ -1,10 +1,5 @@
 # PANDA.jl    Phylogenetic ANalyses of DiversificAtion
 
-```@meta
-CurrentModule = PANDA
-using PANDA
-```
-
 Implements macroevolutionary analyses on phylogenetic trees.
 
 ## Installation
