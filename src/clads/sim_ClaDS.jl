@@ -3,7 +3,7 @@ Simulate a ClaDS2 tree conditionned on tip number
 =#
 
 """
-    sim_ClaDS2_ntips(n::Int64,σ::Float64,α::Float64,ε::Float64,λ0::Float64 ; ...)
+    sim_ClaDS2_ntips(n::Int64,σ::Float64,α::Float64,ε::Float64,λ0::Float64 ;prune_extinct = true, sed = 0.001,max_time = 5, max_simulation_try = 100)
 
 Simulate a tree from the ClaDS model conditionned on the number of tips at present
 

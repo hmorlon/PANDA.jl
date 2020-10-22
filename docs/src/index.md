@@ -26,6 +26,23 @@ julia> using PANDA
 
 The ClaDS module implements the inference of ClaDS parameters on a phylogeny using data augmentation.
 
+
 ```@autodocs
-Modules = [PANDA.ClaDS]
+Module = [PANDA.ClaDS]
+```
+
+```@docs
+PANDA.ClaDS.load_tree
+```
+
+```@docs
+PANDA.ClaDS.infer_ClaDS
+```
+
+```@docs
+PANDA.ClaDS.plot_ClaDS
+```
+
+```@docs
+PANDA.ClaDS.sim_ClaDS2_ntips
 ```

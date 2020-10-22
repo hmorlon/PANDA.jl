@@ -155,7 +155,16 @@ function build_tree(branches::Array{Int64,2}, branch_lengths, attributes::Array{
     end
 end
 
-function load_tree(file)
+
+"""
+    load_tree(file::String)
+
+Loads a tree from a file. Supported formats are '.nex' and '.tre'.
+
+# Arguments
+- `file::String`:path to the file.
+"""
+function load_tree(file::String)
     if file[(end-3):end] == ".tre"
         @rput file
         reval("""
