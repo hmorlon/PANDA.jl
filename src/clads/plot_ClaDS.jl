@@ -159,6 +159,19 @@ Plot a tree with branch rates from Julia
 =#
 
 # specifying only the tree, .attribute[id] used as rates
+"""
+    plot_ClaDS(tree::Tree ; ln=true, show_labels = false, options="")
+
+Simulate a tree from the ClaDS model conditionned on the number of tips at present
+
+# Arguments
+- `tree::Tree`: the phylogeny to be plotted.
+
+# Keyword arguments
+- `ln::Bool`: Should rates be plotted on a log scale? Default to true.
+- `show_labels::Bool`: Should tip labels be printed? Default to false.
+- `options::String`: Additonal options for the ploting function.
+"""
 function plot_ClaDS(tree::Tree ; id = 1, ln=true, show_labels = false, options="")
     plot_tree = Tree(tree.offsprings, 0., tree.attributes, tree.n_nodes)
 
@@ -188,7 +201,13 @@ function plot_ClaDS(tree::Tree ; id = 1, ln=true, show_labels = false, options="
 end
 
 # specifying the tree and a vector of rates
-function plot_ClaDS(tree::Tree, rates ; id = 1, ln=true, round = false, options = "", show_labels=false)
+"""
+    plot_ClaDS(tree::Tree, rates::Array{Number,1}  ; ln=true, show_labels = false, options="")
+
+# Arguments
+- `rates::Array{Number,1} `: the speciation rates.
+"""
+function plot_ClaDS(tree::Tree, rates::Array{Number,1} ; id = 1, ln=true, round = false, options = "", show_labels=false)
     plot_tree = Tree(tree.offsprings, 0., tree.attributes, tree.n_nodes)
 
     opt = options
