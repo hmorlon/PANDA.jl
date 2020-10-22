@@ -19,6 +19,7 @@ StringDistances = "88034a9c-02f8-509d-84a9-84ec65e18404"
 
 [compat]
 DifferentialEquations = "6"
+Distributions = "0.24"
 Optim = "0, 1.0, 1.1, 1.2"
 ProgressMeter = "0.9, 1"
 RCall = "0.13"

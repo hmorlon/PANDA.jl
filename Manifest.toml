@@ -25,10 +25,10 @@ uuid = "4fba245c-0d91-5ea0-9b3e-6abc04ee57a9"
 version = "2.13.6"
 
 [[ArrayLayouts]]
-deps = ["FillArrays", "LinearAlgebra"]
-git-tree-sha1 = "951c3fc1ff93497c88fb1dfa893f4de55d0b38e3"
+deps = ["Compat", "FillArrays", "LinearAlgebra", "SparseArrays"]
+git-tree-sha1 = "613ee839b41d4fb5aef6494a9ac998d058729051"
 uuid = "4c555306-a7a7-4459-81d9-ec55ddd5c99a"
-version = "0.3.8"
+version = "0.4.9"
 
 [[Artifacts]]
 deps = ["Pkg"]
@@ -37,10 +37,10 @@ uuid = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
 version = "1.3.0"
 
 [[BandedMatrices]]
-deps = ["ArrayLayouts", "FillArrays", "LinearAlgebra", "Random", "SparseArrays"]
-git-tree-sha1 = "eaf98fa821ab26c5825fa3a054db735755c335da"
+deps = ["ArrayLayouts", "Compat", "FillArrays", "LinearAlgebra", "Random", "SparseArrays"]
+git-tree-sha1 = "c462231baa800ec25075747c97c6477fffa89873"
 uuid = "aae01518-5342-5314-be14-df237901396f"
-version = "0.15.15"
+version = "0.15.24"
 
 [[Base64]]
 uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
@@ -55,12 +55,6 @@ version = "2.5.0"
 git-tree-sha1 = "215a9aa4a1f23fbd05b92769fdd62559488d70e9"
 uuid = "fa961155-64e5-5f13-b03f-caf6b980ea82"
 version = "0.4.1"
-
-[[Calculus]]
-deps = ["LinearAlgebra"]
-git-tree-sha1 = "f641eb0a4f00c343bbc32346e1217b86f3ce9dad"
-uuid = "49dc2e85-a5d0-5ad3-a950-438e2897f1b9"
-version = "0.5.1"
 
 [[CanonicalTraits]]
 deps = ["MLStyle"]
@@ -168,12 +162,6 @@ git-tree-sha1 = "c252e7a153d902f7c535feb3d296fdd9812049c3"
 uuid = "459566f4-90b8-5000-8ac3-15dfb0a30def"
 version = "2.14.1"
 
-[[DiffEqDiffTools]]
-deps = ["ArrayInterface", "LinearAlgebra", "Requires", "SparseArrays", "StaticArrays"]
-git-tree-sha1 = "a4ed8a740484627ea41b47f7e1a25dd909a28353"
-uuid = "01453d9d-ee7c-5054-8395-0335cb756afa"
-version = "1.7.0"
-
 [[DiffEqFinancial]]
 deps = ["DiffEqBase", "DiffEqNoiseProcess", "LinearAlgebra", "Markdown", "RandomNumbers"]
 git-tree-sha1 = "db08e0def560f204167c58fd0637298e13f58f73"
@@ -233,10 +221,10 @@ deps = ["Random", "Serialization", "Sockets"]
 uuid = "8ba89e20-285c-5b6f-9357-94700520ee1b"
 
 [[Distributions]]
-deps = ["FillArrays", "LinearAlgebra", "PDMats", "Printf", "QuadGK", "Random", "SpecialFunctions", "Statistics", "StatsBase", "StatsFuns"]
-git-tree-sha1 = "9c41285c57c6e0d73a21ed4b65f6eec34805f937"
+deps = ["FillArrays", "LinearAlgebra", "PDMats", "Printf", "QuadGK", "Random", "SparseArrays", "SpecialFunctions", "StaticArrays", "Statistics", "StatsBase", "StatsFuns"]
+git-tree-sha1 = "a5ae8f6469cd4f259f4729d3b12be966f453b938"
 uuid = "31c24e10-a181-5473-b8eb-7969acd0382f"
-version = "0.23.8"
+version = "0.24.1"
 
 [[DocStringExtensions]]
 deps = ["LibGit2", "Markdown", "Pkg", "Test"]
@@ -257,9 +245,9 @@ version = "0.3.2"
 
 [[FillArrays]]
 deps = ["LinearAlgebra", "Random", "SparseArrays"]
-git-tree-sha1 = "4863cbb7910079369e258dee4add9d06ead5063a"
+git-tree-sha1 = "502b3de6039d5b78c76118423858d981349f3823"
 uuid = "1a297f60-69ca-5386-bcde-b61e274b549b"
-version = "0.8.14"
+version = "0.9.7"
 
 [[FiniteDiff]]
 deps = ["ArrayInterface", "LinearAlgebra", "Requires", "SparseArrays", "StaticArrays"]
@@ -445,10 +433,10 @@ uuid = "f9640e96-87f6-5992-9c3b-0743c6a49ffa"
 version = "1.8.1"
 
 [[NLSolversBase]]
-deps = ["Calculus", "DiffEqDiffTools", "DiffResults", "Distributed", "ForwardDiff"]
-git-tree-sha1 = "f1b8ed89fa332f410cfc7c937682eb4d0b361521"
+deps = ["DiffResults", "Distributed", "FiniteDiff", "ForwardDiff"]
+git-tree-sha1 = "39d6bc45e99c96e6995cbddac02877f9b61a1dd1"
 uuid = "d41bc354-129a-5804-8e4c-c37616107c6c"
-version = "7.5.0"
+version = "7.7.1"
 
 [[NLsolve]]
 deps = ["Distances", "LineSearches", "LinearAlgebra", "NLSolversBase", "Printf", "Reexport"]
@@ -486,9 +474,9 @@ version = "0.5.3+4"
 
 [[Optim]]
 deps = ["Compat", "FillArrays", "LineSearches", "LinearAlgebra", "NLSolversBase", "NaNMath", "Parameters", "PositiveFactorizations", "Printf", "SparseArrays", "StatsBase"]
-git-tree-sha1 = "c05aa6b694d426df87ff493306c1c5b4b215e148"
+git-tree-sha1 = "c434c4853a7e61506caf0340b3c153fc08865088"
 uuid = "429524aa-4258-5aef-a3af-852621145aeb"
-version = "0.22.0"
+version = "1.2.0"
 
 [[OrderedCollections]]
 git-tree-sha1 = "16c08bf5dba06609fe45e30860092d6fa41fde7b"
