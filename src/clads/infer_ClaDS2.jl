@@ -9,7 +9,7 @@ Infer ClaDS parameters on a tree
 
 # Keyword arguments
 - `former_run::CladsOutput`: the result of a run of `infer_ClaDS` on the tree. The new mcmc chains will be added to these ones.
-- `f::Float64`: The sampling probability. Default to `1.`.
+- `f::Float64`: The sampling probability. It can be a `Float` (in which case the whole clade has the same sampling probability), or a vector length `n_tips(tree)`(in which case sampling probabilities are subclades specific andmust be given in the same order as the tip tip_labels(tree))` Default to `1.`.
 - `thin::Int64`: The thinning parameter. Default to `1.`.
 - `burn::Float64`: The proportion of the mcmc that will be discarded befor computing the gelman statistics and point estiamtes for the parameters. Default to `0.25`.
 - `n_trees::Int64`: Number of samples from the posterior distribution of complete phylogenies to be outputed. Default to `10`.

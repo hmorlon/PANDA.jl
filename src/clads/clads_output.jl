@@ -37,6 +37,17 @@ function print_CladsOutput(co::CladsOutput)
 end
 
 
+"""
+    plot_CladsOutput(co::CladsOutput ; method = "tree", ...)
+
+Plots various aspects of the output of ClaDS
+
+# Arguments
+- `co::CladsOutput` : A `CladsOutput` object, the output of a ClaDS run.
+
+# Keyword arguments
+- `method::String` : A `String` indicating what aspect of the output should be plotted, see details.
+"""
 function plot_CladsOutput(co::CladsOutput ; method = "tree",
     nplot = 50, alpha_col = 0.05, options = "", id_par = 1)
 
