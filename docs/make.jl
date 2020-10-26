@@ -1,4 +1,4 @@
-using Documenter, Revise,  PANDA
+using Documenter,  PANDA
 
 makedocs(;
     modules=[PANDA],
