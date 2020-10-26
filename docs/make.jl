@@ -1,11 +1,11 @@
-using Documenter, PANDA
+using Documenter, Revise,  PANDA
 
 makedocs(;
     modules=[PANDA],
     format=Documenter.HTML(),
     pages=[
         "Home" => "index.md",
-        "ClaDS" => Any["Tutorial" => "clads/tutorial.md"]
+        "ClaDS" => Any["Manual" => "clads/tutorial.md"]
     ],
     repo="https://github.com/hmorlon/PANDA.jl/blob/{commit}{path}#L{line}",
     sitename="PANDA.jl",

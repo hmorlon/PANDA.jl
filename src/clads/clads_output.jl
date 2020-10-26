@@ -1,3 +1,22 @@
+"""
+A structure containig the informations about the resulot of a ClaDS run. Contains the following fields :
+
+- `tree::Tree`: the phylogeny on which the analysis was performed.
+- `chains::Array{Array{Array{Float64,1},1},1}` : the mcmc chains
+- `rtt_chains::Array{Array{Array{Float64,1},1},1}` : the mcmc chains with the rate through time
+- `σ_map::Float64` : the σ parameter estimate
+- `α_map::Float64` : the α parameter estimate
+- `ε_map::Float64` : the ε parameter estimate
+- `λ0_map::Float64` : the initial speciation rate estimate
+- `λi_map::Array{Float64,1}` : the estimates of the branh specific speciation rates
+- `λtip_map::Array{Float64,1}` : the estimates of the tip speciation rates
+- `DTT_mean::Array{Float64,1}` : the diversity through time estimates
+- `RTT_map::Array{Float64,1}` : the rate through time estimates
+- `time_points::Array{Float64,1}` : the times at which `DTT_mean` and `RTT_map` are computed
+- `enhanced_trees::Array{Tree,1}` : a sample of the complet tree distribution
+- `gelm::Tuple{Int64,Float64}` : the gelman parameter
+- `current_state` : other variables, by `infer_ClaDS` used to continue the run
+"""
 struct CladsOutput
     tree::Tree
     chains::Array{Array{Array{Float64,1},1},1}

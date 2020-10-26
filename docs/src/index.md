@@ -28,5 +28,5 @@ The ClaDS module implements the inference of ClaDS parameters on a phylogeny usi
 
 ```@autodocs
 Modules = [PANDA.ClaDS]
-Pages   = ["load_tree.jl", "infer_ClaDS2.jl", "clads_output.jl", "plot_ClaDS.jl"]
+Pages   = ["load_tree.jl", "infer_ClaDS2.jl", "clads_output.jl", "plot_ClaDS.jl","tree_class.jl", "Tree_utils.jl","clads_output.jl"]
 ```
