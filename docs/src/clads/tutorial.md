@@ -1,4 +1,4 @@
-# ClaDS tutorial
+# ClaDS manual
 
 The `ClaDS` module implements the Data Augmentation inference method for the ClaDS model, that allows estimating branch specific speciation rates on a reconstructed phylogeny.
 
@@ -54,7 +54,7 @@ f = [ i < n_tips(my_tree.offsprings[1]) ? 0.3 : 0.8 for i in 1:n_tips(my_tree)]
 output = infer_ClaDS(my_tree, f = f)
 ```
 
-### Result
+## Result
 
 The result is a [`CladsOutput`](@ref) object, that contains the following fields:
 - `tree`: the `Tree` object on which the inference was performed.
