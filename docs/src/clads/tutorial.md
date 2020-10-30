@@ -4,7 +4,7 @@ The `ClaDS` module implements the Data Augmentation inference method for the Cla
 
 ## Loading a tree
 
-You can import a phylogeny to the environment using the `load_tree` function. Currently supported extensions include `.tre` and `.nex`.
+You can import a phylogeny to the environment using the [`load_tree`](@ref) function. Currently supported extensions include `.tre` and `.nex`.
 
 ```julia
 my_tree = load_tree(tree_path)
@@ -12,7 +12,7 @@ my_tree = load_tree(tree_path)
 
 ## Running ClaDS
 
-The parameter inference is ran with the function `infer_ClaDS`
+The parameter inference is ran with the function [`infer_ClaDS`](@ref)
 
 ```julia
 output = infer_ClaDS(my_tree)
@@ -56,7 +56,7 @@ output = infer_ClaDS(my_tree, f = f)
 
 ### Result
 
-The result is a `CladsOutput` object, that contains the following fields:
+The result is a [`CladsOutput`](@ref) object, that contains the following fields:
 - `tree`: the `Tree` object on which the inference was performed.
 - `chains`: the resulting mcmc chains.
 - `rtt_chains`: the mcmc chains of  the mean rate through time.
@@ -76,7 +76,7 @@ tip_rate(output, sp_name)
 
 ### Plot the branch specific rates
 
-It can be plotted using the `plot_CladsOutput` function. By default, this function plots the reconstructed phylogeny painted with the inferred branch-specific speciation rates, but other methods are available.
+It can be plotted using the [`plot_CladsOutput`](@ref) function. By default, this function plots the reconstructed phylogeny painted with the inferred branch-specific speciation rates, but other methods are available.
 
 ```julia
 plot_CladsOutput(output)
