@@ -42,7 +42,7 @@ output = infer_ClaDS(my_tree, f = 0.94)
 
 Alternatively, different sampling fractions can be specified for different subclades. To do so, `f` should be passed as a `Array{Float64}` of length `n`, where `n` is the number of tip in the phylogeny. `f[i]` is the sampling fraction of the subclade that contains tip `i`. If the `Tree` object has tip labels (which can be accessed using `tip_labels(my_tree)`, the sampling fractions in `f` are in the same order as the tip labels, and `f[i]` is the sampling fraction of the subclade that contains the tip with label `tip_labels(my_tree)[i]`.
 
-In the following example, the left subtree of `my_tree`is assigned the sampling fraction `0.3` and its right subtree the sampling fraction `0.8`.
+In the following example, the left subtree of `my_tree` is assigned the sampling fraction `0.3` and its right subtree the sampling fraction `0.8`.
 
 ```julia
 #=

@@ -13,7 +13,7 @@ A structure containig the informations about the resulot of a ClaDS run. Contain
 - `DTT_mean::Array{Float64,1}` : the diversity through time estimates
 - `RTT_map::Array{Float64,1}` : the rate through time estimates
 - `time_points::Array{Float64,1}` : the times at which `DTT_mean` and `RTT_map` are computed
-- `enhanced_trees::Array{Tree,1}` : a sample of the complet tree distribution
+- `enhanced_trees::Array{Tree,1}` : a sample of the complete tree distribution
 - `gelm::Tuple{Int64,Float64}` : the gelman parameter
 - `current_state` : other variables, by `infer_ClaDS` used to continue the run
 """
