@@ -4,9 +4,13 @@ R ploting function
 
 function create_plot_ClaDS_ape()
     reval("""
-    require(fields)
-    require(ape)
-    require(RColorBrewer)
+
+    list.of.packages <- c("ape", "fields", "RColorBrewer")
+    new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+    if(length(new.packages)) install.packages(new.packages)
+	require(fields)
+	require(ape)
+	require(RColorBrewer)
 
     plot_ClaDS=function(phylo,rate1,rate2=NULL,same.scale=T,main=NULL,lwd=3,log=T, show_labels=F, minr = Inf, maxr = 0, show_legend = T,...){
         Colors = colorRampPalette(rev(c('darkred',brewer.pal(n = 8, name = "Spectral"),'darkblue')))(100)
