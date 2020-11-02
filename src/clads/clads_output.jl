@@ -68,14 +68,14 @@ Plots various aspects of the output of ClaDS
 - `method::String` : A `String` indicating what aspect of the output should be plotted, see details.
 """
 function plot_CladsOutput(co::CladsOutput ; method = "tree",
-    nplot = 50, alpha_col = 0.05, options = "", id_par = 1)
+    nplot = 50, alpha_col = 0.05, options = "", id_par = 1, force_ylim = Array{Float64,1}(undef,0))
 
     if method == "tree"
         plot_ClaDS(co.tree,co.λi_map, options = options)
     elseif method == "DTT"
-        plot_DTT(co, n_ltt = nplot, alpha_col = alpha_col)
+        plot_DTT(co, n_ltt = nplot, alpha_col = alpha_col, force_ylim = force_ylim)
     elseif method == "RTT"
-        plot_RTT(co, nplot = nplot, alpha_col = alpha_col)
+        plot_RTT(co, nplot = nplot, alpha_col = alpha_col, force_ylim = force_ylim)
     elseif method == "density"
         plot_density(co, id_par)
     elseif method == "chain"

@@ -207,7 +207,7 @@ end
 
 # specifying the tree and a vector of rates
 
-function plot_ClaDS(tree::Tree, rates::Array{Number,1} ; id = 1, ln=true, round = false, options = "", show_labels=false)
+function plot_ClaDS(tree::Tree, rates::Array{Float64,1} ; id = 1, ln=true, round = false, options = "", show_labels=false)
     plot_tree = Tree(tree.offsprings, 0., tree.attributes, tree.n_nodes)
 
     opt = options
@@ -235,36 +235,10 @@ function plot_ClaDS(tree::Tree, rates::Array{Number,1} ; id = 1, ln=true, round 
     """)
 end
 
-# specifying the tree and two vectors of rates, both kind of rates are plotted on the same color scale
-function plot_ClaDS(tree::Tree, rates1, rates2 ; id = 1, ln=true)
-    plot_tree = Tree(tree.offsprings, 0., tree.attributes, tree.n_nodes)
-
-    reval("""
-    source("/Users/maliet/ownCloud/My_folder/ClaDS_Julia_list_of_lists/plot_ClaDS_2trees.R")
-    """)
-    edges, branch_lengths, new_rates = Tree2ape(plot_tree, id = 1)
-    ntip = (tree.n_nodes + 1)/2
-
-    @rput edges
-    @rput branch_lengths
-    @rput rates1
-    @rput rates2
-    @rput ntip
-    @rput ln
-
-    reval("""
-        tree = list(edge = edges, Nnode = ntip - 1, edge.lengths = branch_lengths, tip.labels = 1:ntip)
-        class(tree) = "phylo"
-        leg = plot_ClaDS_noLeg(tree, rates1, rates2, log=ln $opt)
-        leg = plot_ClaDS_noLeg(tree, rates2, rates1, log=ln $opt)
-        image.plot(z = leg[[1]],col = leg[[2]], horizontal=F,legend.only = T,axis.args=leg[[5]], legend.mar=4.5)
-    """)
-end
-
 
 # diversity through time
 function plot_DTT(co::CladsOutput; nyl = 1000, n_ltt = 100, alpha_col = 0.05, burn = 0.25,
-	thin = 1, axes_cex = 1., lwd = 1., lab_cex = 1.) where {T <: Number}
+	thin = 1, axes_cex = 1., lwd = 1., lab_cex = 1., force_ylim = [2.]) where {T <: Number}
 
 	extant_tree = co.tree
 	chains = co.chains
@@ -287,6 +261,7 @@ function plot_DTT(co::CladsOutput; nyl = 1000, n_ltt = 100, alpha_col = 0.05, bu
 	@rput axes_cex
 	@rput lab_cex
     @rput nyl
+	@rput force_ylim
     reval("""
         require(coda)
         id_ltt = (npar+3):length(chains[[1]])
@@ -315,7 +290,7 @@ function plot_DTT(co::CladsOutput; nyl = 1000, n_ltt = 100, alpha_col = 0.05, bu
 
     reval("""
         library(scales)
-        plot(100000, axes = F, xlim = range(ltt_times), ylim = log(c(2,y_max)), xlab = "time",
+        plot(100000, axes = F, xlim = range(ltt_times), ylim = range(log(c(2,force_ylim,y_max))), xlab = "time",
         ylab = "nb lineages", cex.lab = lab_cex)
         y_lab = c(2,5,10,50,100,200,500,1000,2000,5000,10000,20000,50000)
         y_lab = y_lab[y_lab<=y_max]
@@ -344,14 +319,15 @@ function plot_DTT(co::CladsOutput; nyl = 1000, n_ltt = 100, alpha_col = 0.05, bu
         lines(ltt_times, means[1:length(id_ltt)], col = "darkseagreen1", lwd = 5, lty = 1)
         lines(ltt_times, means[1:length(id_ltt)], col = "darkseagreen4", lwd = 3, lty = 6)
 
-        axis(1, cex.axis = axes_cex, lwd = lwd, lwd.ticks = lwd)
-        axis(2, at = log(y_lab), lab = y_lab, cex.axis = axes_cex, lwd = lwd, lwd.ticks = lwd)
+        axis(1, cex.axis = axes_cex, lwd = 2, lwd.ticks = 2)
+        axis(2, at = log(y_lab), lab = y_lab, cex.axis = axes_cex, lwd = 2, lwd.ticks = 2)
 
     """)
 end
 
 
-function plot_RTT(co::CladsOutput ;nplot = 50, miny = -1, maxy = 1, alpha_col = 0.05, burn = 0., axes_cex = 1., lwd = 1., lab_cex = 1., lay = 5)
+function plot_RTT(co::CladsOutput ;nplot = 50, miny = -1, maxy = 1, alpha_col = 0.05, burn = 0., axes_cex = 1., lwd = 1., lab_cex = 1., lay = 5,
+	force_ylim = Array{Float64,1}(undef,0))
 
 	times = co.time_points[2:end]
 	RTT_map = co.RTT_map
@@ -372,9 +348,11 @@ function plot_RTT(co::CladsOutput ;nplot = 50, miny = -1, maxy = 1, alpha_col = 
 	@rput lay
 	@rput RTT_map
 	@rput range_RTT
+	@rput force_ylim
 
     reval("""
-		ylim = log(range_RTT)#+c(miny,maxy)
+		ylim = log(range(c(range_RTT, force_ylim)))#+c(miny,maxy)
+		print(ylim)
         library(scales)
         plot(100000, axes = F, xlim = range(t), ylim = ylim,
         xlab = "time", ylab = "mean rate", cex.lab = lab_cex)
