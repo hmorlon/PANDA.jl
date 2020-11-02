@@ -74,6 +74,8 @@ If the tree has tip labels, the tip rate for species `sp_name` can be extracted 
 tip_rate(output, sp_name)
 ```
 
+The result can be saved as a `.Rdata` object with the function [`export_in_R`](@ref), so it can be manipulated in [R](https://www.r-project.org/).
+
 ### Plot the branch specific rates
 
 It can be plotted using the [`plot_CladsOutput`](@ref) function. By default, this function plots the reconstructed phylogeny painted with the inferred branch-specific speciation rates, but other methods are available.
