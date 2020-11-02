@@ -7,7 +7,10 @@ function create_plot_ClaDS_ape()
 
     list.of.packages <- c("ape", "fields", "RColorBrewer")
     new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
-    if(length(new.packages)){print(paste0("package ", list.of.packages, " should be installed in R"))}
+    if(length(new.packages)){
+		print(paste0("package ", list.of.packages, " should be installed in R."))
+		print(paste0("Please install these packages within a R session before continuing."))
+		}
 	require(fields)
 	require(ape)
 	require(RColorBrewer)
