@@ -18,6 +18,11 @@ The parameter inference is ran with the function [`infer_ClaDS`](@ref)
 output = infer_ClaDS(my_tree)
 ```
 
+The keyword argument `print_state` can be used to print the state of the run every `print_state` iteration.
+
+```julia
+output = infer_ClaDS(my_tree, print_state = 100)
+```
 You can save the result with
 
 ```julia

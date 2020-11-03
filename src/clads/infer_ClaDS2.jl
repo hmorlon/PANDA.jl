@@ -13,7 +13,8 @@ Infer ClaDS parameters on a tree
 - `thin::Int64`: The thinning parameter. Default to `1.`.
 - `burn::Float64`: The proportion of the mcmc that will be discarded befor computing the gelman statistics and point estiamtes for the parameters. Default to `0.25`.
 - `n_trees::Int64`: Number of samples from the posterior distribution of complete phylogenies to be outputed. Default to `10`.
-- `goal_gelman::Float64`: . Default to `1.05`.
+- `goal_gelman::Float64`: The gelman parameter value below which the run is stoped. Default to `1.05`.
+- `print_state::Int64`: If `> 0`, the state of the chains is printed every `print_state`iteration. Default to `0`.
 """
 function infer_ClaDS(tree::Tree, n_reccord=1000::Int64; ini_par = [], initialize_rates = 0, goal_gelman = 1.05,
     thin = 1, burn = 1/4, f = 1., plot_tree = 0, print_state = 0, max_node_number = 100, plot_chain = false,
