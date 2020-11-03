@@ -6,6 +6,6 @@
 /docs/build/
 /docs/site/
 /src/clads/function_index.txt
-/src/testin_clads_dev.jl
+testing_dev.jl
 birds.jl
 save_enhanced.jl
