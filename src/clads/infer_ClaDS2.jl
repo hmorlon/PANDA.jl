@@ -10,13 +10,13 @@ Infer ClaDS parameters on a tree
 # Keyword arguments
 - `former_run::CladsOutput`: the result of a run of `infer_ClaDS` on the tree. The new mcmc chains will be added to these ones.
 - `f::Float64`: The sampling probability. It can be a `Float` (in which case the whole clade has the same sampling probability), or a vector length `n_tips(tree)`(in which case sampling probabilities are subclades specific andmust be given in the same order as the tip tip_labels(tree))` Default to `1.`.
+- `goal_gelman::Float64`: The gelman parameter value below which the run is stoped. Default to `1.05`.
+- `max_it_number::Int64`: Maximum number of MCMC iterations. If the number of iterations reaches this value, the run stop even if the gelman statistic is still above `goal_gelamn`. Default to `Inf`.
 - `thin::Int64`: The thinning parameter. Default to `1.`.
 - `burn::Float64`: The proportion of the mcmc that will be discarded befor computing the gelman statistics and point estiamtes for the parameters. Default to `0.25`.
 - `n_trees::Int64`: Number of samples from the posterior distribution of complete phylogenies to be outputed. Default to `10`.
 - `ltt_steps::Int64`: Number of time points at which the rate through time and diversity through time should be computed. Default to `50`.
-- `goal_gelman::Float64`: The gelman parameter value below which the run is stoped. Default to `1.05`.
 - `print_state::Int64`: If `> 0`, the state of the chains is printed every `print_state`iteration. Default to `0`.
-- `max_it_number::Int64`: Maximum number of MCMC iterations. If the number of iterations reaches this value, the run stop even if the gelman statistic is still above `goal_gelamn`. Default to `Inf`.
 """
 function infer_ClaDS(tree::Tree, n_reccord=1000::Int64; ini_par = [], initialize_rates = 0, goal_gelman = 1.05,
     thin = 1, burn = 1/4, f = 1., plot_tree = 0, print_state = 0, max_node_number = 100, plot_chain = false,
