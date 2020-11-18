@@ -79,7 +79,7 @@ If the tree has tip labels, the tip rate for species `sp_name` can be extracted 
 tip_rate(output, sp_name)
 ```
 
-The result can be saved as a `.Rdata` object with the function [`export_in_R`](@ref), so it can be manipulated in [R](https://www.r-project.org/).
+The result can be saved as a `.Rdata` object with the function [`save_ClaDS_in_R`](@ref), so it can be manipulated in [R](https://www.r-project.org/).
 
 ### Plot the branch specific rates
 
