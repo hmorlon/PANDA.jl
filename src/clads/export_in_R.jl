@@ -38,7 +38,7 @@ The .Rdata file contains an object called `CladsOutput` that is a list with the 
 - `DTT_mean`: the point estimate for the diversity through time
 - `RTT_map` : the rate through time estimates
 - `time_points` : the times at which `DTT_mean` and `RTT_map` are computed
-- `enhanced_trees` : a sample of the complete tree distribution, as a list of `phylo` ojects
+- `enhanced_trees` : a sample of the complete tree distribution, as a list of `phylo` objects
 - `gelm` : the gelman parameter
 """
 function save_ClaDS_in_R(co::CladsOutput, path::String)
