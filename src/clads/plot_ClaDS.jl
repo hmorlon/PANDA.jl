@@ -359,7 +359,6 @@ function plot_RTT(co::CladsOutput ;nplot = 50, miny = -1, maxy = 1, alpha_col = 
 
     reval("""
 		ylim = log(range(c(range_RTT, force_ylim)))#+c(miny,maxy)
-		print(ylim)
         library(scales)
         plot(100000, axes = F, xlim = range(t), ylim = ylim,
         xlab = "time", ylab = "mean rate", cex.lab = lab_cex)
