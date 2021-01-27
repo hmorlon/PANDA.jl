@@ -75,7 +75,7 @@ function initialize_ClaDS2(tree::Tree ; ini_par = [], initialize_rates = 0, ltt_
 end
 
 function add_iter_ClaDS2(sampler, n_reccord::Int64; thin = 1, fs = 1., plot_tree = 0, print_state = 0,
-    max_node_number = 1_000, max_try = 100_000, it_edge_tree = 1, print_all = false, it_rates = 1, n_trees = 10, ini = false)
+    max_node_number = 1_000, max_try = 100_000, it_edge_tree = 1, print_all = false, it_rates = 1, n_trees = 10, ini = false, prior_ε = "uniform", logε0 = 0., sdε = 0.5)
 
     chain_s, param_s, edge_trees_s, tree_s, extant_branch_lengths, ltt_times, live_nd, mean_rates_chains, enhanced_trees = sampler
 
@@ -115,7 +115,11 @@ function add_iter_ClaDS2(sampler, n_reccord::Int64; thin = 1, fs = 1., plot_tree
                     draw_λ0_slicing!(rates, edge_trees, σ, α, ε, lefts)
                     σ = draw_σ(relative_rates, α, β0 = 0.05, α0 = 0.5)
                     α = draw_α(relative_rates, σ,  α_0 = -0.05, σ_0 = 0.1)
-                    ε = draw_ε_crown(tree, edge_trees, lefts)
+                    if prior_ε == "uniform"
+                        ε = draw_ε_crown(tree, edge_trees, lefts)
+                    else
+                        ε = draw_ε_crown_priorln(tree, edge_trees, lefts, logε0 = logε0, sd = sdε)
+                    end
                     draw_λ0!(tree::Tree, ε::Float64, rates::Array{Float64,1},
                         edge_trees::Array{EdgeTreeRates2,1})
                     tree.attributes[1] = rates[1]

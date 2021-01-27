@@ -17,11 +17,14 @@ Infer ClaDS parameters on a tree
 - `n_trees::Int64`: Number of samples from the posterior distribution of complete phylogenies to be outputed. Default to `10`.
 - `ltt_steps::Int64`: Number of time points at which the rate through time and diversity through time should be computed. Default to `50`.
 - `print_state::Int64`: If `> 0`, the state of the chains is printed every `print_state`iteration. Default to `0`.
+- `prior_ε::String` : The prior to be used for ε. Default to "uniform", as used in the paper, but a "lognormal" prior can be defined as an alternative.
+- `logε0::Float64`: If `prior_ε = "lognormal"`, mean of the ε prior on the log scale.
+- `sdε::Float64`: If `prior_ε = "lognormal"`, standard deviation of the ε prior on the log scale.
 """
 function infer_ClaDS(tree::Tree, n_reccord=1000::Int64; ini_par = [], initialize_rates = 0, goal_gelman = 1.05,
     thin = 1, burn = 1/4, f = 1., plot_tree = 0, print_state = 0, max_node_number = 100, plot_chain = false,
     max_try = 10_000, it_edge_tree = 30, print_all = false, it_rates = 3, former_run = CladsOutput(), plot_burn = NaN, ltt_steps = 50,
-    max_it_number = Inf, end_it = Inf, n_chains = 3, n_trees = 10)
+    max_it_number = Inf, end_it = Inf, n_chains = 3, n_trees = 10, prior_ε = "uniform", logε0 = 0., sdε = 0.5)
 
     ntips = Int64((tree.n_nodes + 1)/2)
     if isnan(plot_burn)
@@ -66,7 +69,7 @@ function infer_ClaDS(tree::Tree, n_reccord=1000::Int64; ini_par = [], initialize
 
         sampler = add_iter_ClaDS2(sampler, n_reccord, thin = thin, fs = fs, plot_tree = plot_tree, print_state = print_state,
             max_node_number = max_node_number, max_try = max_try, it_edge_tree = it_edge_tree,
-            print_all = print_all, it_rates = it_rates, n_trees = n_trees)
+            print_all = print_all, it_rates = it_rates, n_trees = n_trees, prior_ε = prior_ε, logε0 = logε0, sdε = sdε)
 
         nit += n_reccord
 

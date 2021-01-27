@@ -311,6 +311,95 @@ function draw_ε_crown(tree::Tree, edge_trees::Array{EdgeTreeRates2,1}, lefts::A
     return draw_ε_crown(S, n_extinct, n_cond)
 end
 
+function draw_ε_crown_priorln(S::Float64, n_extinct::Int64, n_cond::Int64 ; n_it = 10, logε0 = 0., sd = 0.5) where {T<:Number}
+
+    n_extinct_eff = n_extinct
+    n_cond_eff = n_cond - 1
+    δ = sqrt((n_extinct_eff + n_cond_eff - S)^2 + 4*n_extinct_eff*S)
+
+    best_ε = log(max((n_extinct_eff + n_cond_eff - S + δ)/(2*S),(n_extinct_eff + n_cond_eff - S - δ)/(2*S)))
+    max_f = best_ε * n_extinct_eff +
+        log(exp(best_ε)+1) * n_cond_eff -
+        S * exp(best_ε)
+
+    function fx(x ; ne = n_extinct_eff, nc = n_cond_eff, s = S)
+         exp(x * ne  + log(exp(x)+1) * nc - s * exp(x) - max_f - (x - logε0)^2/(2*sd^2))
+     end
+     function df(x;  ne = n_extinct_eff, nc = n_cond_eff, s = S)
+         ne + exp(x)/(exp(x) + 1) * nc - s * exp(x) - (x - logε0)/(sd^2)
+    end
+
+
+    λ = best_ε
+    fλ = fx(λ)
+
+    for j in 1:n_it
+        u = fλ * rand()
+        reject = true
+
+        min_eff = best_ε - 10
+        max_eff = best_ε + 10
+
+        while reject
+            λ = rand() * (max_eff - min_eff) + min_eff
+            fλ = fx(λ)
+
+            #println("$fλ , $u , $λ, $best_ε ")
+
+            reject = fλ < u
+
+            dfλ = df(λ)
+            if reject
+                if dfλ > 0
+                    min_eff = λ
+                else
+                    max_eff = λ
+                end
+            end
+        end
+    end
+
+    if !isnan(λ)
+        return exp(λ)
+    else
+        return 0.001
+    end
+end
+
+function draw_ε_crown_priorln(tree::Tree, edge_trees::Array{EdgeTreeRates2,1}, lefts::Array{Int64,1} ; logε0 = 1., sd = 0.5)
+    S = extract_S(tree, edge_trees)
+    n_extinct = extract_nextinct(tree, edge_trees)
+    crown_edges = [1, 1 + lefts[1]]
+
+    n_cond = 0
+    if tree.offsprings[1].n_nodes > 1
+        n_cond += 1
+    end
+    if tree.offsprings[2].n_nodes > 1
+        n_cond += 1
+    end
+    bl = [tree.offsprings[1].branch_length, tree.offsprings[2].branch_length]
+    for edge in 1:2
+        if edge_trees[crown_edges[edge]].tree.n_nodes > 1
+            n_cond -= 1
+            ltt = LTT(edge_trees[crown_edges[edge]].tree)
+            s = edge_trees[crown_edges[edge]].scale
+            b = bl[edge]*s
+            for e in 1:length(ltt[2])
+                if ltt[2][e] == 1
+                    n_cond += 1
+                end
+                if ltt[1][e] >= b
+                    break
+                end
+
+            end
+        end
+    end
+
+    return draw_ε_crown_priorln(S, n_extinct, n_cond,  logε0 = logε0, sd = sd)
+end
+
 function draw_λi_quad!(rates::Array{Float64,1}, edge_trees::Array{EdgeTreeRates2,1},
     σ::Float64, α::Float64, ε::Float64, tree::Tree, lefts::Array{Int64,1}; n_it = 5, bounds = 10)
 
