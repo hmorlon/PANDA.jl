@@ -620,7 +620,7 @@ function update_edges_ETR2!(tree::Tree, edge_trees::Array{EdgeTreeRates2,1}, σ:
     for j in 1:it_rates
 
         draw_λi_quad!(rates, edge_trees, σ, α, ε, tree, lefts)
-        relative_rates = extract_relative_rates(tree, edge_trees, rates)
+        relative_rates = extract_relative_rates_partial(tree, edge_trees, rates)
 
         σ = draw_σ(relative_rates, α, β0 = 0.05, α0 = 0.5)
         α = draw_α(relative_rates, σ,  α_0 = -0.05, σ_0 = 0.1)

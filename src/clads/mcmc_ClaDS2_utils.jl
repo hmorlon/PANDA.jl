@@ -78,7 +78,7 @@ function add_iter_ClaDS2(sampler, n_reccord::Int64; thin = 1, fs = 1., plot_tree
     max_node_number = 1_000, max_try = 100_000, it_edge_tree = 1, print_all = false, it_rates = 1, n_trees = 10, ini = false, prior_ε = "uniform", logε0 = 0., sdε = 0.5)
 
     chain_s, param_s, edge_trees_s, tree_s, extant_branch_lengths, ltt_times, live_nd, mean_rates_chains, enhanced_trees = sampler
-
+    println("partial version (in dev 0.2)")
     n_chains = length(chain_s)
     tips_id = tips(tree_s[1])[2:end]
     lefts = n_left(tree_s[1])
@@ -111,7 +111,7 @@ function add_iter_ClaDS2(sampler, n_reccord::Int64; thin = 1, fs = 1., plot_tree
                         do_tips =  true)
 
 
-                    relative_rates = extract_relative_rates(tree, edge_trees, rates)
+                    relative_rates = extract_relative_rates_partial(tree, edge_trees, rates)
                     draw_λ0_slicing!(rates, edge_trees, σ, α, ε, lefts)
                     σ = draw_σ(relative_rates, α, β0 = 0.05, α0 = 0.5)
                     α = draw_α(relative_rates, σ,  α_0 = -0.05, σ_0 = 0.1)
@@ -145,8 +145,10 @@ function add_iter_ClaDS2(sampler, n_reccord::Int64; thin = 1, fs = 1., plot_tree
                 end
                 if print_state>0
                     if i%print_state == 0 && (j == thin || print_all)
-                        relative_rates = extract_relative_rates(tree, edge_trees)
-                        println("$i : sd $(sqrt(var(relative_rates))), mean $(mean(relative_rates)), σ $σ, α $α, ε $ε, λ0 $(rates[1]), n_ext $(extract_nextinct(tree,edge_trees)) $(n_tip(tree,edge_trees)) $(n_extant_tips(tree,edge_trees))")
+                        relative_rates = extract_relative_rates_partial(tree, edge_trees)
+                        println("$i : $(length(relative_rates)); sd $(sqrt(var(relative_rates))), mean $(mean(relative_rates)), σ $σ, α $α, ε $ε, λ0 $(rates[1]), n_ext $(extract_nextinct(tree,edge_trees)) $(n_tip(tree,edge_trees)) $(n_extant_tips(tree,edge_trees))")
+                        relative_rates2 = extract_relative_rates_full(tree, edge_trees)
+                        println("$i : $(length(relative_rates2)); sd $(sqrt(var(relative_rates2))), mean $(mean(relative_rates2))")
                     end
                 end
 
