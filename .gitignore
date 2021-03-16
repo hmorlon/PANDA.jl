@@ -7,7 +7,9 @@
 /docs/site/
 /src/clads/function_index.txt
 testing_dev.jl
-birds.jl
+birds*
+ex*
+diatom*
 cichlids.jl
 save_enhanced.jl
 comp_with*
