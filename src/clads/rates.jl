@@ -86,7 +86,7 @@ function extract_relative_rates(tree::Tree, edge_trees::Array{EdgeTreeRates2,1};
         r = log(et.stem_rate[1]) - log(parent_rate)
         pushfirst!(relative_rates,r)
 
-        if length(et.tree.offsprings) > 10000000
+        if length(et.tree.offsprings) > 1#0000000
             aux(et.tree.offsprings[1], 0., relative_rates)
             aux(et.tree.offsprings[2], 0., relative_rates)
         end
