@@ -60,6 +60,11 @@ function infer_ClaDS(tree::Tree, n_reccord=1000::Int64; ini_par = [], initialize
             former_run = CladsOutput()
     end
 
+    min_branch = minimum(extract_branch_lengths(tree)[2:end])
+
+    if min_branch < 1e-10
+        println("Warning : some of the branches of your tree are very small ($(min_branch)), this may lead to numerical issues.")
+    end
 
     gelman = 10.
     MAPS=[]
