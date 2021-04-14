@@ -34,5 +34,6 @@ include("clads/enhance_tree.jl")
 include("clads/rates.jl")
 include("clads/gibbs.jl")
 include("clads/export_in_R.jl")
+include("clads/prune.jl")
 
 end # module ClaDS
