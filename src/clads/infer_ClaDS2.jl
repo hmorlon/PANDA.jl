@@ -17,7 +17,7 @@ Infer ClaDS parameters on a tree
 - `n_trees::Int64`: Number of samples from the posterior distribution of complete phylogenies to be outputed. Default to `10`.
 - `ltt_steps::Int64`: Number of time points at which the rate through time and diversity through time should be computed. Default to `50`.
 - `print_state::Int64`: If `> 0`, the state of the chains is printed every `print_state`iteration. Default to `0`.
-- `prior_ε::String` : The prior to be used for ε. Default to "uniform", as used in the paper, but a "lognormal" prior can be defined as an alternative.
+- `prior_ε::String` : The prior to be used for ε. Default to "uniform" (a uniform prior in [0,1000]), but a "lognormal" prior can be defined as an alternative. It can also be set to a flat prior on [0,Inf], as used in the paper, with "unifromInf".
 - `logε0::Float64`: If `prior_ε = "lognormal"`, mean of the ε prior on the log scale.
 - `sdε::Float64`: If `prior_ε = "lognormal"`, standard deviation of the ε prior on the log scale.
 """

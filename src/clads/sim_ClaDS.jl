@@ -20,7 +20,6 @@ Simulate a tree from the ClaDS model conditionned on the number of tips at prese
 function sim_ClaDS2_ntips(n::Int64,σ::Float64,α::Float64,ε::Float64,λ0::Float64 ;
     prune_extinct = true, sed = 0.001,
     max_time = 5, max_simulation_try = 100)
-
     # accesory functions that will be called latter
 
     bernouilli=Bernoulli(ε/(1+ε))
@@ -179,6 +178,7 @@ function sim_ClaDS2_time(root_age,σ,α,ε,λ0 ; return_if_extinct = true, max_n
             return Tree(Array{Tree,1}(undef,0), -1., [-1], -1, false)
         else
             return prune_extinct_lineages(tree)
+            println("pruned")
         end
     else
         if (tree.n_nodes == -1) & return_if_max
