@@ -323,11 +323,7 @@ function draw_ε_crown_priorUnif(S::Float64, n_extinct::Int64, n_cond::Int64 ; n
 
     xmax = log(1000)
     function fx(x ; ne = n_extinct_eff, nc = n_cond_eff, s = S)
-        if x > xmax
-            0
-        else
-            exp(x * ne  + log(exp(x)+1) * nc - s * exp(x) - max_f)
-        end
+        exp(x * ne  + log(exp(x)+1) * nc - s * exp(x) - max_f)
      end
 
 
