@@ -317,12 +317,13 @@ function draw_ε_crown_priorUnif(S::Float64, n_extinct::Int64, n_cond::Int64 ; n
     n_cond_eff = n_cond - 1
     δ = sqrt((n_extinct_eff + n_cond_eff - S)^2 + 4*n_extinct_eff*S)
     best_ε = log(max((n_extinct_eff + n_cond_eff - S + δ)/(2*S),(n_extinct_eff + n_cond_eff - S - δ)/(2*S)))
+    best_ε = min(best_ε,log(990))
     max_f = best_ε * n_extinct_eff +
         log(exp(best_ε)+1) * n_cond_eff -
         S * exp(best_ε)
 
     xmax = log(1000)
-    best_ε = min(best_ε,log(500))
+
     function fx(x ; ne = n_extinct_eff, nc = n_cond_eff, s = S)
         if x > xmax
             0
@@ -334,7 +335,7 @@ function draw_ε_crown_priorUnif(S::Float64, n_extinct::Int64, n_cond::Int64 ; n
 
     λ = best_ε
     fλ = fx(λ)
-
+    print(fλ)
     for j in 1:n_it
         u = fλ * rand()
         reject = true
