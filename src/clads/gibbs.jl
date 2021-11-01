@@ -335,7 +335,6 @@ function draw_ε_crown_priorUnif(S::Float64, n_extinct::Int64, n_cond::Int64 ; n
 
     λ = best_ε
     fλ = fx(λ)
-    print(fλ)
     for j in 1:n_it
         u = fλ * rand()
         reject = true
