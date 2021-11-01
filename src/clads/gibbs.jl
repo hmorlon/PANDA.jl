@@ -340,7 +340,7 @@ function draw_ε_crown_priorUnif(S::Float64, n_extinct::Int64, n_cond::Int64 ; n
         reject = true
 
         min_eff = best_ε - 10
-        max_eff = max(best_ε + 10, max_x)
+        max_eff = max(best_ε + 10, xmax)
 
         while reject
             λ = rand() * (max_eff - min_eff) + min_eff
