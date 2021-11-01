@@ -10,7 +10,7 @@ function R_tree(tree::Tree ; file = "tree.Rdata")
     @rput tip_labels
 
     reval("""
-        temp_tree = list(edge = edges, Nnode = ntip - 1, edge.length = branch_lengths, tip.labels = tip_labels)
+        temp_tree = list(edge = edges, Nnode = ntip - 1, edge.length = branch_lengths, tip.label = tip_labels)
         class(temp_tree) = "phylo"
     """)
 end
