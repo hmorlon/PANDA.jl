@@ -119,6 +119,8 @@ function add_iter_ClaDS2(sampler, n_reccord::Int64; thin = 1, fs = 1., plot_tree
                         ε = draw_ε_crown_priorUnif(tree, edge_trees, lefts)
                     elseif prior_ε == "uniformInf"
                         ε = draw_ε_crown(tree, edge_trees, lefts)
+                    elseif prior_ε == "ClaDS0"
+                        ε = 0.
                     else
                         ε = draw_ε_crown_priorln(tree, edge_trees, lefts, logε0 = logε0, sd = sdε)
                     end
