@@ -613,9 +613,17 @@ function sim_ClaDS2_time_rates_tip(root_age,σ,α,ε,λ0,u,sf,fl ; return_if_ext
 end
 
 function update_edges_ETR2!(tree::Tree, edge_trees::Array{EdgeTreeRates2,1}, σ::Float64, α::Float64, ε::Float64, rates::Array{Float64,1},
-    lefts::Array{Int64,1}; it_rates = 1)
+    lefts::Array{Int64,1}; it_rates = 1, prior_ε = "lognormal")
 
-    ε = draw_ε_crown(tree, edge_trees, lefts)
+    if prior_ε == "uniform"
+        ε = draw_ε_crown_priorUnif(tree, edge_trees, lefts)
+    elseif prior_ε == "uniformInf"
+        ε = draw_ε_crown(tree, edge_trees, lefts)
+    elseif prior_ε == "ClaDS0"
+        ε = 0.
+    else
+        ε = draw_ε_crown_priorln(tree, edge_trees, lefts, logε0 = logε0, sd = sdε)
+    end
 
     for j in 1:it_rates
 

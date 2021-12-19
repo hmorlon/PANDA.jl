@@ -138,7 +138,7 @@ function add_iter_ClaDS2(sampler, n_reccord::Int64; thin = 1, fs = 1., plot_tree
                 end
 
                 if it_rates > 0
-                    ε, σ, α = update_edges_ETR2!(tree, edge_trees, σ, α, ε, rates,lefts,it_rates = it_rates )
+                    ε, σ, α = update_edges_ETR2!(tree, edge_trees, σ, α, ε, rates,lefts,it_rates = it_rates,  prior_ε = prior_ε)
                 end
 
                 if plot_tree>0
