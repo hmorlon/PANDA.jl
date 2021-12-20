@@ -622,7 +622,7 @@ function update_edges_ETR2!(tree::Tree, edge_trees::Array{EdgeTreeRates2,1}, σ:
     elseif prior_ε == "ClaDS0"
         ε = 0.
     else
-        ε = draw_ε_crown_priorln(tree, edge_trees, lefts, logε0 = logε0, sd = sdε)
+        ε = draw_ε_crown_priorln(tree, edge_trees, lefts, logε0 = logε0, sd = sd)
     end
 
     for j in 1:it_rates
