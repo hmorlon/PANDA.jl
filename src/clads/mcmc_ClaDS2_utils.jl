@@ -322,3 +322,5 @@ function get_parent_rate(tree::Tree, edge_id::Int64, edge_trees::Array{EdgeTreeR
         return edge_trees[parent_edge].tip_rate * rates[parent_edge+1]
     end
 end
+
+
