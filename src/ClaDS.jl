@@ -13,6 +13,7 @@ using Statistics: mean, var
 using StringDistances: Levenshtein
 # other submodules dependencies
 using ..Utils
+using Dates
 
 # files
 include("clads/tree_class.jl")
@@ -22,7 +23,7 @@ include("clads/sim_ClaDS_utils.jl")
 include("clads/sim_ClaDS.jl")
 include("clads/load_tree.jl")
 include("clads/plot_ClaDS.jl")
-include("clads/infer_ClaDS2.jl")
+include("clads/infer_clads_time_max.jl")
 include("clads/mcmc_ClaDS2_utils.jl")
 include("clads/sample_fractions.jl")
 include("clads/LTT.jl")
