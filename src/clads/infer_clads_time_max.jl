@@ -20,12 +20,12 @@ Infer ClaDS parameters on a tree
 - `prior_ε::String` : The prior to be used for ε. Default to "uniform" (a uniform prior in [0,1000]), but a "lognormal" prior can be defined as an alternative. It can also be set to a flat prior on [0,Inf], as used in the paper, with "unifromInf". Finally, setting it to "ClaDS0" forces the extinction at 0.
 - `logε0::Float64`: If `prior_ε = "lognormal"`, mean of the ε prior on the log scale.
 - `sdε::Float64`: If `prior_ε = "lognormal"`, standard deviation of the ε prior on the log scale.
-- `max_tme::int`: Maximum run time for the MCMC in minutes. Default to `Inf`.
+- `end_tme::int`: Maximum run time for the MCMC in minutes. Default to `Inf`.
 """
 function infer_ClaDS(tree::Tree, n_reccord=1000::Int64; ini_par = [], initialize_rates = 0, goal_gelman = 1.05,
     thin = 1, burn = 1/4, f = 1., plot_tree = 0, print_state = 0, max_node_number = 100, plot_chain = false,
     max_try = 10_000, it_edge_tree = 30, print_all = false, it_rates = 3, former_run = CladsOutput(), plot_burn = NaN, ltt_steps = 50,
-    end_it = Inf, n_chains = 3, n_trees = 10, prior_ε = "uniform", logε0 = 0., sdε = 0.5, max_tme = Inf)
+    end_it = Inf, n_chains = 3, n_trees = 10, prior_ε = "uniform", logε0 = 0., sdε = 0.5, end_tme = Inf)
 
     ntips = Int64((tree.n_nodes + 1)/2)
     if isnan(plot_burn)
@@ -74,7 +74,7 @@ function infer_ClaDS(tree::Tree, n_reccord=1000::Int64; ini_par = [], initialize
     start_time = time()
     reason_for_stop = "none"
 
-    while (gelman > goal_gelman) & (nit < end_it) & (time() < start_time + (max_tme*60))
+    while (gelman > goal_gelman) & (nit < end_it) & (time() < start_time + (end_tme*60))
 
         # printing the current time
         println("Starting MCMC chains at $(Dates.now())")
@@ -157,12 +157,12 @@ function infer_ClaDS(tree::Tree, n_reccord=1000::Int64; ini_par = [], initialize
     end
 
     # Check each condition individually to see which one returned false
-    if time() >= start_time + (max_tme * 60)
+    if time() >= start_time + (end_tme * 60)
         println("Condition failed: Max time reached")
-        reason_for_stop = "max_time"
+        reason_for_stop = "end_time"
     elseif nit >= end_it
         println("Condition failed: Max iterations reached")
-        reason_for_stop = "max_it"
+        reason_for_stop = "end_it"
     elseif gelman <= goal_gelman
         println("Goal Gelman reached")
         reason_for_stop = "goal_gelman"
