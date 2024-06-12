@@ -48,6 +48,7 @@ function infer_ClaDS(tree::Tree, n_reccord=1000::Int64; ini_par = [], initialize
                 print_all = print_all, it_rates = 1, n_trees = n_trees, ini = true)
         end
     else
+        println("Continuing a former run")
         sampler = (former_run.chains,
             former_run.current_state[1],
             former_run.current_state[2],
@@ -76,7 +77,7 @@ function infer_ClaDS(tree::Tree, n_reccord=1000::Int64; ini_par = [], initialize
     while (gelman > goal_gelman) & (nit < end_it) & (time() < start_time + (max_tme*60))
 
         # printing the current time
-        println("$(Dates.now())")
+        println("Starting MCMC chains at $(Dates.now())")
 
         sampler = add_iter_ClaDS2(sampler, n_reccord, thin = thin, fs = fs, plot_tree = plot_tree, print_state = print_state,
             max_node_number = max_node_number, max_try = max_try, it_edge_tree = it_edge_tree,
@@ -156,20 +157,17 @@ function infer_ClaDS(tree::Tree, n_reccord=1000::Int64; ini_par = [], initialize
     end
 
     # Check each condition individually to see which one returned false
-    if gelman <= goal_gelman
-        println("Condition failed: gelman > goal_gelman")
+    if time() >= start_time + (max_tme * 60)
+        println("Condition failed: Max time reached")
+        reason_for_stop = "max_time"
+    elseif nit >= end_it
+        println("Condition failed: Max iterations reached")
+        reason_for_stop = "max_it"
+    elseif gelman <= goal_gelman
+        println("Goal Gelman reached")
         reason_for_stop = "goal_gelman"
     end
 
-    if nit >= end_it
-        println("Condition failed: nit < end_it")
-        reason_for_stop = "max_it"
-    end
-
-    if time() >= start_time + (max_tme * 60)
-        println("Condition failed: time() < start_time + (max_tme * 60)")
-        reason_for_stop = "max_time"
-    end
 
     gelm = (0,0)
     npar = sampler[4][1].n_nodes + 3
