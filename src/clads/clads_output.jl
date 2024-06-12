@@ -32,18 +32,52 @@ struct CladsOutput
     time_points::Array{Float64,1}
     enhanced_trees::Array{Tree,1}
     gelm::Tuple{Int64,Float64}
+    reason_for_stop::String
     current_state # all the rest that is mising to continue the run
 end
+
+# function CladsOutput()
+#     return CladsOutput(
+#         Tree(),
+#         Array{Array{Array{Float64,1},1},1}(undef,0),
+#         Array{Array{Array{Float64,1},1},1}(undef,0),
+#         0.,
+#         0.,
+#         0.,
+#         0.,
+#         [0.],
+#         [0.],
+#         [0.],
+#         [0.],
+#         [0.],
+#         [Tree()],
+#         (0,10.),
+#         0.,
+#         "",
+#     )
+# end
 
 function CladsOutput()
     return CladsOutput(
         Tree(),
-        Array{Array{Array{Float64,1},1},1}(undef,0),
-        Array{Array{Array{Float64,1},1},1}(undef,0),
-        0.,0.,0.,0.,[0.],[0.],[0.],[0.],
-        [0.],[Tree()],(0,10.),0.
+        Array{Array{Array{Float64,1},1},1}(undef, 0),
+        Array{Array{Array{Float64,1},1},1}(undef, 0),
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        [0.0],
+        [0.0],
+        [0.0],
+        [0.0],
+        [0.0],
+        [Tree()],
+        (0, 10.0),
+        "",
+        ([], [], [], [], [])  # This initializes current_state
     )
 end
+
 
 function print_CladsOutput(co::CladsOutput)
     n = n_tip(co.tree)
