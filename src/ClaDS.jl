@@ -11,8 +11,6 @@ using Distributions: Bernoulli, LogNormal, Weights, sample, Normal, InverseGamma
 using RCall: @rput, @rget, reval
 using Statistics: mean, var
 using StringDistances: Levenshtein
-# other submodules dependencies
-using ..Utils
 
 # files
 include("clads/tree_class.jl")
