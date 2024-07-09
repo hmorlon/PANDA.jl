@@ -12,5 +12,5 @@ makedocs(
 )
 
 deploydocs(
-    repo="github.com/hmorlon/PANDA.jl.git",
+    repo="github.com/hmorlon/PANDA.jl",
 )
